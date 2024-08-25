@@ -1,6 +1,6 @@
 -- Common Locals
-local service = shared.service
 local components = require(script.Parent.Parent.ui).components
+local Services = require(script.Parent.Parent.utils.Services)
 
 local Console = {}
 local Messages = {
@@ -80,7 +80,7 @@ Console.Init = function()
 		table.insert(Messages[types[messageType]], message)
 	end
 
-	service.LogService.MessageOut:Connect(function(message, messageType)
+	Services.LogService.MessageOut:Connect(function(message, messageType)
 		pcall(function(...)
 			if not consoleToggled then
 				return

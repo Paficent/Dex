@@ -1,22 +1,14 @@
--- Poor man require directory aliases
 local DexVersion = "Alpha 1.0.0"
+local env = require(script.utils.env)
 
 local Main
 local Lib, Apps, Settings
-local env, service, plr, create
+local plr, create
 
 do
 	shared.Main = {}
 	shared.Apps = {}
 	shared.Settings = {}
-	shared.env = require(script.utils.Environment)
-	shared.service = setmetatable({}, {
-		__index = function(self, name)
-			local serv = game:GetService(name)
-			self[name] = serv
-			return serv
-		end,
-	})
 	shared.create = function(data)
 		local insts = {}
 		for i, v in pairs(data) do
@@ -47,7 +39,6 @@ do
 	Main = shared.Main
 	Apps = shared.Apps
 	Settings = shared.Settings
-	env = shared.env
 	service = shared.service
 	create = shared.create
 	plr = shared.plr
@@ -131,7 +122,6 @@ local DefaultSettings = {
 }
 
 Main.ModuleList = { "3DViewer", "Executor", "Console", "ScriptViewer", "Debugger", "Properties", "Explorer" }
-Main.Elevated = false
 Main.MissingEnv = {}
 Main.Version = "Beta 1.0.0"
 Main.Mouse = plr:GetMouse()
@@ -184,52 +174,6 @@ Main.LoadModules = function()
 	Executor = shared.Apps.Executor
 	Console = shared.Apps.Console
 	Debugger = shared.Apps.Debugger
-end
-
-Main.InitEnv = function()
-	setmetatable(shared.env, {
-		__newindex = function(self, name, func)
-			if not func then
-				Main.MissingEnv[#Main.MissingEnv + 1] = name
-				return
-			end
-			rawset(self, name, func)
-		end,
-	})
-
-	-- file
-	env.readfile = readfile
-	env.writefile = writefile
-	env.appendfile = appendfile
-	env.makefolder = makefolder
-	env.listfiles = listfiles
-	env.loadfile = loadfile
-	env.saveinstance = saveinstance
-
-	-- debug
-	env.getupvalues = debug.getupvalues or getupvals
-	env.getconstants = debug.getconstants or getconsts
-	env.islclosure = islclosure or is_l_closure
-	env.checkcaller = checkcaller
-	env.getreg = getreg
-	env.getgc = getgc
-
-	-- other
-	env.setfflag = setfflag
-	env.decompile = decompile
-	env.protectgui = protect_gui or (syn and syn.protect_gui)
-	env.gethui = gethui
-	env.setclipboard = setclipboard
-	env.getnilinstances = getnilinstances or get_nil_instances
-	env.getloadedmodules = getloadedmodules
-
-	if identifyexecutor then
-		Main.Executor = identifyexecutor()
-	end
-
-	Main.GuiHolder = Main.Elevated and service.CoreGui or plr:FindFirstChildOfClass("PlayerGui")
-
-	setmetatable(env, nil)
 end
 
 --[[
@@ -316,7 +260,7 @@ end
 
 Main.FetchAPI = function()
 	local api, rawAPI
-	if Main.Elevated then
+	if env.IsElevated() then
 		if Main.LocalDepsUpToDate() then
 			local localAPI = Lib.ReadFile("dex/rbx_api.dat")
 			if localAPI then
@@ -484,7 +428,7 @@ end
 
 Main.FetchRMD = function()
 	local rawXML
-	if Main.Elevated then
+	if env.IsElevated() then
 		if Main.LocalDepsUpToDate() then
 			local localRMD = Lib.ReadFile("dex/rbx_rmd.dat")
 			if localRMD then
@@ -1491,10 +1435,6 @@ Main.Init = function(config: { any }?)
 	Main.Config = config or getDefaultConfig()
 	print(Main.Config)
 
-	Main.Elevated = pcall(function()
-		local a = game:GetService("CoreGui"):GetFullName()
-	end)
-	Main.InitEnv()
 	Main.LoadSettings()
 	Main.SetupFilesystem()
 
@@ -1562,7 +1502,7 @@ Main.Init = function(config: { any }?)
 
 	-- Fetch version only if build
 	intro.SetProgress("Fetching Roblox Version", 0.2)
-	if Main.Elevated then
+	if env.IsElevated() then
 		local fileVer = Lib.ReadFile("dex/deps_version.dat")
 		Main.ClientVersion = Version()
 		if fileVer then
@@ -1583,7 +1523,7 @@ Main.Init = function(config: { any }?)
 	Lib.FastWait()
 
 	-- Save external deps locally if needed
-	if Main.Elevated and env.writefile and not Main.LocalDepsUpToDate() then
+	if env.IsElevated() and env.writefile and not Main.LocalDepsUpToDate() then
 		env.writefile("dex/deps_version.dat", Main.ClientVersion .. "\n" .. Main.RobloxVersion)
 		env.writefile("dex/rbx_api.dat", Main.RawAPI)
 		env.writefile("dex/rbx_rmd.dat", Main.RawRMD)
@@ -1626,7 +1566,7 @@ end
 
 -- Start
 local Dex
-if Main.Elevated then
+if env.IsElevated() then
 	if getgenv and getgenv() then
 		getgenv().___dex___ = nil
 	end

@@ -11,7 +11,7 @@ if next(dependencies) == nil then
 end
 
 local function movePackages(srcDir, destDir)
-	if not fs.isFile(".lune/wax.luau") then -- Don't move packages if we're not running a wax bundled project
+	if not fs.isFile("lune/wax.luau") then -- Don't move packages if we're not running a wax bundled project
 		return
 	end
 
@@ -30,8 +30,6 @@ repeat
 until fs.isDir("Packages")
 task.wait(1)
 movePackages("Packages", "src/packages")
-if fs.isDir("Packages") then
-	fs.removeDir("Packages")
-end
+print(process.spawn("rojo", { "sourcemap", "-o", "sourcemap.json" }).stdout)
 
 print(`Successfully installed rojo packages to {installDir}`)

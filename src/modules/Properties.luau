@@ -1,8 +1,10 @@
 -- Common Locals
 local components = require(script.Parent.Parent.ui).components
+local Services = require(script.Parent.Parent.utils.Services)
+local env = require(script.Parent.Parent.utils.env)
 
 local Main, Lib, Apps, Settings = shared.Main, shared.Apps.Lib, shared.Apps, shared.Settings
-local API, RMD, service, create = shared.API, shared.RMD, shared.service, shared.create
+local API, RMD, create = shared.API, shared.RMD, shared.create
 
 local Explorer = Apps.Explorer
 
@@ -257,7 +259,7 @@ Properties.ValueToString = function(prop, val)
 end
 
 Properties.GetIndexableProps = function(obj, classData)
-	if not Main.Elevated then
+	if not env.IsElevated() then
 		if not pcall(function()
 			return obj.ClassName
 		end) then
@@ -441,11 +443,9 @@ end
 
 -- Fetches the properties to be displayed based on the explorer selection
 Properties.ShowExplorerProps = function()
-	local maxConflictCheck = Settings.Properties.MaxConflictCheck
 	local sList = Explorer.Selection.List
 	local foundClasses = {}
 	local propCount = 1
-	local elevated = Main.Elevated
 	local showDeprecated, showHidden = Settings.Properties.ShowDeprecated, Settings.Properties.ShowHidden
 	local Classes = API.Classes
 	local classLists = {}
@@ -677,7 +677,7 @@ Properties.Update = function()
 	local count = 1
 	local maxWidth, maxDepth = 0, 1
 
-	local textServ = service.TextService
+	local textServ = Services.TextService
 	local getTextSize = textServ.GetTextSize
 	local font = Enum.Font.SourceSans
 	local size = Vector2.new(math.huge, 20)
@@ -839,7 +839,7 @@ Properties.NewPropEntry = function(index)
 			local nameArr = string.split(prop.Class .. "." .. prop.Name .. (prop.SubName or ""), ".")
 			local dispName = prop.DisplayName or nameArr[#nameArr]
 			local sizeX =
-				service.TextService:GetTextSize(dispName, 14, Enum.Font.SourceSans, Vector2.new(math.huge, 20)).X
+				Services.TextService:GetTextSize(dispName, 14, Enum.Font.SourceSans, Vector2.new(math.huge, 20)).X
 
 			fullNameFrame.TextLabel.Text = dispName
 			--fullNameFrame.Position = UDim2.new(0,Properties.EntryIndent*(prop.Depth or 1) + Properties.EntryOffset,0,23*(index-1))
@@ -928,7 +928,7 @@ Properties.NewPropEntry = function(index)
 		end
 
 		local releaseEvent, mouseEvent
-		releaseEvent = service.UserInputService.InputEnded:Connect(function(input)
+		releaseEvent = Services.UserInputService.InputEnded:Connect(function(input)
 			if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
 				return
 			end
@@ -967,7 +967,7 @@ Properties.NewPropEntry = function(index)
 		end
 		update(input)
 
-		mouseEvent = service.UserInputService.InputChanged:Connect(function(input)
+		mouseEvent = Services.UserInputService.InputChanged:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement then
 				update(input)
 			end

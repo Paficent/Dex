@@ -1,5 +1,6 @@
 local Utils = {}
 
+-- TODO rewrite classes so this isnt neccessary anymore
 function Utils.initObj(props, mt)
 	local type = type
 	local function copy(t)
@@ -34,5 +35,9 @@ function Utils.getGuiMT(props, funcs)
 		end,
 	}
 end
+
+Utils.env = require(script.env)
+Utils.Lua = require(script.Lua)
+Utils.Services = require(script.Services)
 
 return Utils

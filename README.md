@@ -34,18 +34,19 @@ Everything here is ordered by priority
     - [ ] Proper credits
     - [ ] Install and building instructions
 - [ ] Remote Spy
-    - [ ] yh
 - [ ] Debugger
     - [ ] Upvalue Scanner
     - [ ] Constant Scanner
     - [ ] Script Scanner
         - [ ] Get protos in GC
         - [ ] ModuleScripts and LocalScripts
+- [ ] Rewrite init.luau
+- [ ] Plugin API
+    - [ ] Robust and fully typed UI for interacting with Dex and creating Windows
 - [ ] Http Spy (Might scratch this cuz detections)
     - [ ] Undetectable http spy
     - [ ] Possibly an option in the console window? not sure
     - [ ] Off by default
-- [ ] Rewrite init.luau
 
 ## Building for Local Development
 - Install [Luau-LSP](https://github.com/JohnnyMorganz/luau-lsp) and optionally [Stylua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) if you plan to contribute to this project

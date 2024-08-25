@@ -1,14 +1,15 @@
 -- Common Locals
+local Services = require(script.Parent.Parent.utils.Services)
+local env = require(script.Parent.Parent.utils.env)
+
 local Main = shared.Main
-local env, service, createSimple = shared.env, shared.service, shared.createSimple -- Main Locals
+local createSimple = shared.createSimple -- Main Locals
 
 local Lib = {}
-
-local renderStepped = service.RunService.RenderStepped
+local renderStepped = Services.RunService.RenderStepped
 local signalWait = renderStepped.wait
 
 -- Functions
-
 Lib.FormatLuaString = (function()
 	local string = string
 	local gsub = string.gsub
@@ -42,13 +43,13 @@ Lib.CheckMouseInGui = function(gui)
 end
 
 Lib.IsShiftDown = function()
-	return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
-		or service.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+	return Services.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+		or Services.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
 end
 
 Lib.IsCtrlDown = function()
-	return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl)
-		or service.UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
+	return Services.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl)
+		or Services.UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
 end
 
 Lib.CreateArrow = function(size, num, dir)
@@ -441,7 +442,7 @@ Lib.LoadCustomAsset = function(filepath)
 		return
 	end
 
-	return env.getcustomasset(filepath)
+	return env.getcustomasset(filepath, false)
 end
 
 Lib.FetchCustomAsset = function(url, filepath)
@@ -457,116 +458,6 @@ Lib.FetchCustomAsset = function(url, filepath)
 	env.writefile(filepath, data)
 	return Lib.LoadCustomAsset(filepath)
 end
-
-Lib.Set = (function()
-	local funcs = {}
-
-	funcs.Add = function(self, obj)
-		if self.Map[obj] then
-			return
-		end
-
-		local list = self.List
-		list[#list + 1] = obj
-		self.Map[obj] = true
-		self.Changed:Fire()
-	end
-
-	funcs.AddTable = function(self, t)
-		local changed
-		local list, map = self.List, self.Map
-		for i = 1, #t do
-			local elem = t[i]
-			if not map[elem] then
-				list[#list + 1] = elem
-				map[elem] = true
-				changed = true
-			end
-		end
-		if changed then
-			self.Changed:Fire()
-		end
-	end
-
-	funcs.Remove = function(self, obj)
-		if not self.Map[obj] then
-			return
-		end
-
-		local list = self.List
-		local pos = table.find(list, obj)
-		if pos then
-			table.remove(list, pos)
-		end
-		self.Map[obj] = nil
-		self.Changed:Fire()
-	end
-
-	funcs.RemoveTable = function(self, t)
-		local changed
-		local list, map = self.List, self.Map
-		local removeSet = {}
-		for i = 1, #t do
-			local elem = t[i]
-			map[elem] = nil
-			removeSet[elem] = true
-		end
-
-		for i = #list, 1, -1 do
-			local elem = list[i]
-			if removeSet[elem] then
-				table.remove(list, i)
-				changed = true
-			end
-		end
-		if changed then
-			self.Changed:Fire()
-		end
-	end
-
-	funcs.Set = function(self, obj)
-		if #self.List == 1 and self.List[1] == obj then
-			return
-		end
-
-		self.List = { obj }
-		self.Map = { [obj] = true }
-		self.Changed:Fire()
-	end
-
-	funcs.SetTable = function(self, t)
-		local newList, newMap = {}, {}
-		self.List, self.Map = newList, newMap
-		table.move(t, 1, #t, 1, newList)
-		for i = 1, #t do
-			newMap[t[i]] = true
-		end
-		self.Changed:Fire()
-	end
-
-	funcs.Clear = function(self)
-		if #self.List == 0 then
-			return
-		end
-		self.List = {}
-		self.Map = {}
-		self.Changed:Fire()
-	end
-
-	local mt = { __index = funcs }
-
-	local function new()
-		local obj = setmetatable({
-			List = {},
-			Map = {},
-			Changed = Signal.new(),
-		}, mt)
-
-		return obj
-	end
-
-	return { new = new }
-end)()
 
 -- Classes
 

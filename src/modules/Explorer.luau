@@ -1,10 +1,11 @@
 -- Common Locals
 local components = require(script.Parent.Parent.ui).components
+local Services = require(script.Parent.Parent.utils.Services)
+local env = require(script.Parent.Parent.utils.env)
 
 local Main, Apps, Settings = shared.Main, shared.Apps, shared.Settings -- Main Containers
 local Properties, ScriptViewer, Lib = Apps.Properties, Apps.ScriptViewer, Apps.Lib -- Major Apps
-local API, RMD, env, service, plr, create =
-	shared.API, shared.RMD, shared.env, shared.service, shared.plr, shared.create
+local API, RMD, plr, create = shared.API, shared.RMD, shared.plr, shared.create
 
 local Explorer = {}
 local nodes, tree, listEntries, explorerOrders, searchResults, specResults = {}, {}, {}, {}, {}, {}
@@ -12,7 +13,7 @@ local expanded
 local entryTemplate, treeFrame, toolBar, descendantAddedCon, descendantRemovingCon, itemChangedCon
 local ffa = game.FindFirstAncestorWhichIsA
 local getDescendants = game.GetDescendants
-local getTextSize = service.TextService.GetTextSize
+local getTextSize = Services.TextService.GetTextSize
 local updateDebounce, refreshDebounce = false, false
 local nilNode = { Obj = Instance.new("Folder") }
 local idCounter = 0
@@ -423,7 +424,7 @@ Explorer.Update = function()
 	local tSort = table.sort
 	local sortFunc = Explorer.NodeSorter
 	local isSearching = (expanded == Explorer.SearchExpanded)
-	local textServ = service.TextService
+	local textServ = Services.TextService
 
 	local function recur(root, depth)
 		if depth > maxDepth then
@@ -573,7 +574,7 @@ Explorer.StartDrag = function(offX, offY)
 	})
 	dragOutline.Parent = treeFrame
 
-	local mouse = Main.Mouse or service.Players.LocalPlayer:GetMouse()
+	local mouse = Main.Mouse or Services.Players.LocalPlayer:GetMouse()
 	local function move()
 		local posX = mouse.X - offX
 		local posY = mouse.Y - offY
@@ -593,7 +594,7 @@ Explorer.StartDrag = function(offX, offY)
 	end
 	move()
 
-	local input = service.UserInputService
+	local input = Services.UserInputService
 	local mouseEvent, releaseEvent
 
 	mouseEvent = input.InputChanged:Connect(function(input)
@@ -899,7 +900,7 @@ Explorer.SetupConnections = function()
 		itemChangedCon:Disconnect()
 	end
 
-	if Main.Elevated then
+	if env.IsElevated() then
 		descendantAddedCon = game.DescendantAdded:Connect(addObject)
 		descendantRemovingCon = game.DescendantRemoving:Connect(removeObject)
 	else
@@ -1813,9 +1814,9 @@ Explorer.SearchFilters = { -- TODO: Use data table (so we can disable some if fu
 			end
 
 			if
-				not service.Players.LocalPlayer.Character
-				or not service.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-				or not service.Players.LocalPlayer.Character.HumanoidRootPart:IsA("BasePart")
+				not Services.Players.LocalPlayer.Character
+				or not Services.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+				or not Services.Players.LocalPlayer.Character.HumanoidRootPart:IsA("BasePart")
 			then
 				return
 			end
@@ -1823,7 +1824,7 @@ Explorer.SearchFilters = { -- TODO: Use data table (so we can disable some if fu
 			return {
 				Headers = {
 					"local isa = game.IsA",
-					"local hrp = service.Players.LocalPlayer.Character.HumanoidRootPart",
+					"local hrp = Services.Players.LocalPlayer.Character.HumanoidRootPart",
 				},
 				Setups = { "local hrpPos = hrp.Position" },
 				ObjectDefs = { "local isBasePart = isa(obj,'BasePart')" },
@@ -1834,7 +1835,7 @@ Explorer.SearchFilters = { -- TODO: Use data table (so we can disable some if fu
 	Specific = {
 		["players"] = function()
 			return function()
-				return service.Players:GetPlayers()
+				return Services.Players:GetPlayers()
 			end
 		end,
 		["loadedmodules"] = function()
@@ -2032,7 +2033,7 @@ local searchResults = searchResults
 local nodes = nodes
 local expandTable = Explorer.SearchExpanded
 local specResults = specResults
-local service = service
+local Services = Services
 
 %s
 local function search(root)	
@@ -2075,7 +2076,7 @@ return search]==]
 		["nodes"] = nodes,
 		["Explorer"] = Explorer,
 		["specResults"] = specResults,
-		["service"] = service,
+		["Services"] = Services,
 	}, { __index = getfenv() })
 	setfenv(func, env)
 
@@ -2124,7 +2125,7 @@ Explorer.DoSearch = function(query)
 			end
 		end
 
-		if Main.Elevated then
+		if env.IsElevated() then
 			local start = tick()
 			searchFunc, specFilters = Explorer.BuildSearchFunc(query)
 			--print("BUILD SEARCH",tick()-start)
@@ -2803,7 +2804,7 @@ Explorer.Init = function()
 	Explorer.SetupConnections()
 
 	local insts = getDescendants(game)
-	if Main.Elevated then
+	if env.IsElevated() then
 		for i = 1, #insts do
 			local obj = insts[i]
 			local par = nodes[ffa(obj, "Instance")]
