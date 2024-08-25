@@ -20,7 +20,7 @@ permissions:
 jobs:
   create-release:
     name: Create Release
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Create Release
@@ -32,7 +32,7 @@ jobs:
   build-script:
     needs: ["create-release"]
     name: Bundle Dex
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
