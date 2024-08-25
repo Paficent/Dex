@@ -58,18 +58,12 @@ Everything here is ordered by priority
   - [ ] 3D Viewer
     - [ ] Use a viewport frame
     - [ ] Saveinstance within the viewer
-- [ ] Http Spy (Might scratch this cuz detections)
-  - [ ] Undetectable http spy
-  - [ ] Possibly an option in the console window? not sure
-  - [ ] Off by default
 
 ## Building for Local Development
 
 - Install [Luau-LSP](https://github.com/JohnnyMorganz/luau-lsp) and optionally [Stylua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) if you plan to contribute to this project
-- Install [rokit](https://github.com/rojo-rbx/rokit/releases/latest) (restart your computer afterwards on window)
+- Install [rokit](https://github.com/rojo-rbx/rokit/releases/latest) (restart your computer afterwards on Windows)
 - Run `rokit install` to install the neccessary tools
 - Run `lune run install` to install wally packages
 - Run `rojo serve` to get Dex working via rojo
 - Run `lune run build` to build for production
-
-### For the love of god please dont make your fork public
