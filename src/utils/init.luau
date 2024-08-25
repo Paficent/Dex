@@ -25,6 +25,7 @@ function Utils.getGuiMT(props, funcs)
 			if not props[ind] then
 				return funcs[ind] or self.Gui[ind]
 			end
+			return nil
 		end,
 		__newindex = function(self, ind, val)
 			if not props[ind] then

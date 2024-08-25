@@ -3,7 +3,7 @@ env.__index = env
 
 --// Locals
 local HttpService: HttpService = game:GetService("HttpService")
-local Config = shared.Main.Config
+local Config = shared.Config
 local MissingEnv = {}
 local elevated
 

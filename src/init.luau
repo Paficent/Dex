@@ -1,5 +1,5 @@
 local DexVersion = "Alpha 1.0.0"
-local env = require(script.utils.env)
+local env, Services
 
 local Main
 local Lib, Apps, Settings
@@ -34,18 +34,23 @@ do
 		end
 		return inst
 	end
-	shared.plr = shared.service.Players.LocalPlayer or shared.service.Players.PlayerAdded:Wait()
+	shared.plr = game:GetService("Players").LocalPlayer
 
 	Main = shared.Main
 	Apps = shared.Apps
 	Settings = shared.Settings
-	service = shared.service
 	create = shared.create
 	plr = shared.plr
 end
 
 local function getDefaultConfig() -- TODO
-	return {}
+	local config = require(script.config)
+	local ObjectViewer = require(script.modules.ObjectViewer)
+
+	return {
+		decompiler = config.decompiler.default(),
+		saveinstance = config.saveinstance.default(),
+	}
 end
 
 -- Locals
@@ -121,7 +126,7 @@ local DefaultSettings = {
 	},
 }
 
-Main.ModuleList = { "3DViewer", "Executor", "Console", "ScriptViewer", "Debugger", "Properties", "Explorer" }
+Main.ModuleList = { "ObjectViewer", "Executor", "Console", "ScriptViewer", "Debugger", "Properties", "Explorer" }
 Main.MissingEnv = {}
 Main.Version = "Beta 1.0.0"
 Main.Mouse = plr:GetMouse()
@@ -163,73 +168,24 @@ Main.LoadModules = function()
 	for i, v in pairs(Main.ModuleList) do
 		local s, e = pcall(Main.LoadModule, v)
 		if not s then
-			Main.Error("FAILED LOADING " + v + " CAUSE " + e)
+			Main.Error("FAILED LOADING " .. v .. " CAUSE " .. e)
 		end
 	end
 
 	-- Init Major Apps and define them in modules
 	Explorer = shared.Apps.Explorer
 	Properties = shared.Apps.Properties
-	ScriptViewer = shared.Apps.ScriptViewer
+	Debugger = shared.Apps.Debugger
 	Executor = shared.Apps.Executor
 	Console = shared.Apps.Console
-	Debugger = shared.Apps.Debugger
+	ScriptViewer = shared.Apps.ScriptViewer
+	ObjectViewer = shared.Apps.ObjectViewer
 end
-
---[[
-	Main.IncompatibleTest = function()
-		local function incompatibleMessage(reason)
-			local msg = Instance.new("ScreenGui")
-			local t = Instance.new("TextLabel",msg)
-			t.BackgroundColor3 = Color3.fromRGB(50,50,50)
-			t.Position = UDim2.new(0,0,0,-36)
-			t.Size = UDim2.new(1,0,1,36)
-			t.TextColor3 = Color3.new(1,1,1)
-			t.TextWrapped = true
-			t.TextScaled = true
-			t.Text = "\n\n\n\n\n\n\n\nHello Skidsploit user,\nZinnia and the Secret Service does not approve of Dex being used on your skidsploit.\nPlease consider getting something better.\n\nIncompatible Reason: "..reason.."\n\n\n\n\n\n\n\n"
-			
-			local sound = Instance.new("Sound",msg)
-			sound.SoundId = "rbxassetid://175964948"
-			sound.Volume = 1
-			sound.Looped = true
-			sound.Playing = true
-			Lib.ShowGui(msg)
-			
-			if os and os.execute then pcall(os.execute,'explorer "https://x.synapse.to/"') end
-			while wait() do end
-		end
-		
-		local t = {}
-		t[1] = t
-		local x = unpack(t) or incompatibleMessage("WRAPPER FAILED TO CYCLIC #1")
-		if x[1] ~= t then incompatibleMessage("WRAPPER FAILED TO CYCLIC #2") end
-		
-		if game ~= workspace.Parent then incompatibleMessage("WRAPPER NO CACHE") end
-		
-		if Main.Elevated and not loadstring("for i = 1,1 do continue end") then incompatibleMessage("CAN'T CONTINUE OR NO LOADSTRING") end
-		
-		local obj = newproxy(true)
-		local mt = getmetatable(obj)
-		mt.__index = function() incompatibleMessage("CAN'T NAMECALL") end
-		mt.__namecall = function() end
-		obj:No()
-		
-		local fEnv = setmetatable({zin = 5},{__index = getfenv()})
-		local caller = function(f) f() end
-		setfenv(caller,fEnv)
-		caller(function() if not getfenv(2).zin then incompatibleMessage("RERU WILL BE FILING A LAWSUIT AGAINST YOU SOON") end end)
-		
-		local second = false
-		coroutine.wrap(function() local start = tick() wait(5) if tick() - start < 0.1 or not second then incompatibleMessage("SKIDDED YIELDING") end end)()
-		second = true
-	end
-	]]
 
 Main.LoadSettings = function()
 	local s, data = pcall(env.readfile or error, "DexSettings.json")
 	if s and data and data ~= "" then
-		local s, decoded = service.HttpService:JSONDecode(data)
+		local s, decoded = Services.HttpService:JSONDecode(data)
 		if s and decoded then
 			for i, v in next, decoded do
 			end
@@ -278,7 +234,7 @@ Main.FetchAPI = function()
 		end
 	end
 	Main.RawAPI = rawAPI
-	api = service.HttpService:JSONDecode(rawAPI)
+	api = Services.HttpService:JSONDecode(rawAPI)
 
 	local classes, enums = {}, {}
 	local categoryOrder, seenCategories = {}, {}
@@ -792,9 +748,9 @@ Main.CreateIntro = function(initStatus) -- TODO: Must theme and show errors
 	local creatorGradient = creatorText.UIGradient
 	local statusText = gui.Main.Holder.StatusText
 	local progressBar = gui.Main.Holder.ProgressBar
-	local tweenS = service.TweenService
+	local tweenS = Services.TweenService
 
-	local renderStepped = service.RunService.RenderStepped
+	local renderStepped = Services.RunService.RenderStepped
 	local signalWait = renderStepped.wait
 	local fastwait = function(s)
 		if not s then
@@ -990,7 +946,7 @@ Main.CreateApp = function(data)
 
 	updateState()
 
-	local ySize = service.TextService:GetTextSize(data.Name, 14, Enum.Font.SourceSans, Vector2.new(62, 999999)).Y
+	local ySize = Services.TextService:GetTextSize(data.Name, 14, Enum.Font.SourceSans, Vector2.new(62, 999999)).Y
 	app.Main.Size = UDim2.new(1, 0, 0, math.clamp(46 + ySize, 60, 74))
 	app.Main.AppName.Text = data.Name
 
@@ -1051,7 +1007,7 @@ Main.SetMainGuiOpen = function(val)
 		true
 	)
 	--Main.MainGui.OpenButton.BackgroundTransparency = val and 0 or (Lib.CheckMouseInGui(Main.MainGui.OpenButton) and 0 or 0.2)
-	service.TweenService
+	Services.TweenService
 		:Create(
 			Main.MainGui.OpenButton,
 			TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -1073,7 +1029,7 @@ Main.SetMainGuiOpen = function(val)
 			end
 		end)()
 	else
-		Main.MainGuiMouseEvent = service.UserInputService.InputBegan:Connect(function(input)
+		Main.MainGuiMouseEvent = Services.UserInputService.InputBegan:Connect(function(input)
 			if
 				input.UserInputType == Enum.UserInputType.MouseButton1
 				and not Lib.CheckMouseInGui(Main.MainGui.OpenButton)
@@ -1342,7 +1298,7 @@ Main.CreateMainGui = function()
 
 	openButton.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			service.TweenService
+			Services.TweenService
 				:Create(
 					Main.MainGui.OpenButton,
 					TweenInfo.new(0, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -1354,7 +1310,7 @@ Main.CreateMainGui = function()
 
 	openButton.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			service.TweenService
+			Services.TweenService
 				:Create(
 					Main.MainGui.OpenButton,
 					TweenInfo.new(0, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -1383,10 +1339,10 @@ Main.CreateMainGui = function()
 	})
 
 	Main.CreateApp({
-		Name = "Script Viewer",
+		Name = "Debugger",
 		IconMap = Main.LargeIcons,
-		Icon = "ScriptViewer",
-		Window = ScriptViewer.Window,
+		Icon = "Debugger",
+		Window = Debugger.Window,
 	})
 
 	Main.CreateApp({
@@ -1404,27 +1360,32 @@ Main.CreateMainGui = function()
 	})
 
 	Main.CreateApp({
-		Name = "Debugger",
+		Name = "Object Viewer",
 		IconMap = Main.LargeIcons,
-		Icon = "Debugger",
-		Window = Debugger.Window,
+		Icon = "ScriptViewer",
+		Window = ObjectViewer.Window,
+	})
+
+	Main.CreateApp({
+		Name = "Script Viewer",
+		IconMap = Main.LargeIcons,
+		Icon = "ScriptViewer",
+		Window = ScriptViewer.Window,
 	})
 
 	Lib.ShowGui(gui)
 end
 
 Main.SetupFilesystem = function()
-	if not env.writefile or not env.makefolder then
+	if not env.makefolder then
 		return
 	end
 
-	local writefile, makefolder = env.writefile, env.makefolder
-
-	makefolder("dex")
-	makefolder("dex/assets")
-	makefolder("dex/saved")
-	makefolder("dex/plugins")
-	makefolder("dex/ModuleCache")
+	env.makefolder("dex")
+	env.makefolder("dex/assets")
+	env.makefolder("dex/saved")
+	env.makefolder("dex/plugins")
+	env.makefolder("dex/ModuleCache")
 end
 
 Main.LocalDepsUpToDate = function()
@@ -1432,8 +1393,11 @@ Main.LocalDepsUpToDate = function()
 end
 
 Main.Init = function(config: { any }?)
-	Main.Config = config or getDefaultConfig()
-	print(Main.Config)
+	shared.Config = config or getDefaultConfig()
+	Services = require(script.utils.Services)
+	env = require(script.utils.env)
+
+	Main.GuiHolder = env.IsElevated() and Services.CoreGui or plr:FindFirstChildOfClass("PlayerGui")
 
 	Main.LoadSettings()
 	Main.SetupFilesystem()
@@ -1442,9 +1406,6 @@ Main.Init = function(config: { any }?)
 	local intro = Main.CreateIntro("Initializing Library")
 	Lib = Main.LoadModule("Lib")
 	Lib.FastWait()
-
-	-- Init other stuff
-	--Main.IncompatibleTest()
 
 	-- Init icons
 	Main.MiscIcons = require(script.ui.components.IconMap).new("rbxassetid://6511490623", 256, 256, 16, 16)
@@ -1540,6 +1501,7 @@ Main.Init = function(config: { any }?)
 	Explorer.Init()
 	Properties.Init()
 	ScriptViewer.Init()
+	ObjectViewer.Init()
 	Executor.Init()
 	Console.Init()
 	Debugger.Init()
@@ -1565,14 +1527,17 @@ Main.Init = function(config: { any }?)
 end
 
 -- Start
-local Dex
-if env.IsElevated() then
-	if getgenv and getgenv() then
-		getgenv().___dex___ = nil
-	end
-	Dex = Main.Init(getgenv().___dex___)
-else
-	Dex = Main.Init
-end
+-- local Dex
+-- if pcall(function()
+-- 	local _ = game:GetService("CoreGui"):GetFullName()
+-- end) then
+-- 	if getgenv and getgenv() then
+-- 		getgenv().___dex___ = nil
+-- 	end
+-- 	Dex = Main.Init(getgenv().___dex___)
+-- else
+-- 	Dex = Main.Init
+-- end
 
-return Dex
+-- return Dex
+return Main.Init

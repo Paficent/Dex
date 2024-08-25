@@ -1,5 +1,6 @@
-local LuaUtils = require(script.Parent.Parent.utils.Lua)
 local components = require(script.Parent.Parent.ui).components
+local LuaUtils = require(script.Parent.Parent.utils.Lua)
+local env = require(script.Parent.Parent.utils.env)
 
 local ScriptViewer = {}
 
@@ -93,7 +94,7 @@ ScriptViewer.Init = function()
 	saveButton.Text = "Save To File"
 	saveButton.TextColor3 = Color3.new(1, 1, 1)
 	saveButton.MouseButton1Click:Connect(function()
-		pcall(writefile, "Place_" .. game.PlaceId .. "_Script_" .. os.time() .. ".lua", currentFrame:GetText())
+		pcall(env.writefile, "Place_" .. game.PlaceId .. "_Script_" .. os.time() .. ".lua", currentFrame:GetText())
 	end)
 end
 

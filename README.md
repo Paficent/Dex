@@ -10,12 +10,25 @@ local DexConfig = { -- I'll eventually write up a specific readme for the config
 loadstring(game:HttpGet(string.format("https://github.com/%s/releases/latest/download/Dex.luau", repo)))(DexConfig)
 ```
 
+```lua
+local Dex = game:GetService("ReplicatedStorage").Dex
+local config = require(Dex.config)
+
+local Dexconfig = {
+	saveinstance = config.saveinstance.universalSyn(),
+	decompiler = config.decompiler.default(),
+}
+
+require(Dex)(DexConfig)
+```
 
 ## Roadmap
 Everything here is ordered by priority
 
 - [x] Add Executor Window
     - [x] use Fiu and Luauception for studio compilation
+- [ ] Fix Properties!!!
+    - [ ] Broke something with the last few updates, need to fix
 - [ ] Update build script
     - [ ] Optimize build for client and studio
     - [ ] Fix whatever the fuck is causing wax to bundle RMD and API in the client build
