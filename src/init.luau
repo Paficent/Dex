@@ -126,7 +126,7 @@ local DefaultSettings = {
 	},
 }
 
-Main.ModuleList = { "ObjectViewer", "Executor", "Console", "ScriptViewer", "Debugger", "Properties", "Explorer" }
+Main.ModuleList = { "ObjectViewer", "Executor", "Console", "ScriptViewer", "Debugger", "Explorer", "Properties" }
 Main.MissingEnv = {}
 Main.Version = "Beta 1.0.0"
 Main.Mouse = plr:GetMouse()
@@ -1498,6 +1498,7 @@ Main.Init = function(config: { any }?)
 
 	-- Init other modules
 	intro.SetProgress("Initializing Modules", 0.9)
+
 	Explorer.Init()
 	Properties.Init()
 	ScriptViewer.Init()

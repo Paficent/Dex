@@ -5,7 +5,6 @@ local env = require(script.Parent.Parent.utils.env)
 
 local Main, Lib, Apps, Settings = shared.Main, shared.Apps.Lib, shared.Apps, shared.Settings
 local API, RMD, create = shared.API, shared.RMD, shared.create
-
 local Explorer = Apps.Explorer
 
 local Properties = {}

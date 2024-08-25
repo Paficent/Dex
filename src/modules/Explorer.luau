@@ -2299,7 +2299,7 @@ Explorer.InitEntryTemplate = function()
 				end
 			end
 
-			if Properties.SelectObject(node.Obj) then
+			if shared.Apps.Properties.SelectObject(node.Obj) then
 				sys.IsRenaming = false
 				return
 			end
@@ -2573,7 +2573,7 @@ Explorer.Init = function()
 
 	selection = components.Set.new()
 	selection.ShiftSet = {}
-	selection.Changed:Connect(Properties.ShowExplorerProps)
+	selection.Changed:Connect(shared.Apps.Properties.ShowExplorerProps)
 	Explorer.Selection = selection
 
 	Explorer.InitRightClick()

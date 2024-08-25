@@ -27,13 +27,14 @@ Everything here is ordered by priority
 
 - [x] Add Executor Window
     - [x] use Fiu and Luauception for studio compilation
-- [ ] Fix Properties!!!
-    - [ ] Broke something with the last few updates, need to fix
+- [x] Fix Properties!!!
+    - [x] Broke something with the last few updates, need to fix
 - [ ] Update build script
     - [ ] Optimize build for client and studio
     - [ ] Fix whatever the fuck is causing wax to bundle RMD and API in the client build
 - [ ] Update Console Window
-    - [ ] change styling differently
+    - [ ] Remove lua syntax highlighting
+    - [ ] Add text color based on error message output
     - [ ] implement a command input at the bottom
 - [ ] Modularize Code
     - [x] Lib and UI
