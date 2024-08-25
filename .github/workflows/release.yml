@@ -19,15 +19,22 @@ permissions:
 
 jobs:
   create-release:
-    name: Create Release
+    name: Create Release and install Rokit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create v${{ github.event.inputs.version }} --title "${{ github.event.inputs.version }}" --notes "${{ github.event.inputs.summary }}" --latest
+
+      - name: Setup RoKit
+        run: |
+          curl -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
+          echo 'export PATH="$HOME/.rokit/bin:$PATH"' >> $GITHUB_ENV
+          export PATH="$HOME/.rokit/bin:$PATH"
 
   build-script:
     needs: ["create-release"]
@@ -37,11 +44,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-
-      - name: Setup RoKit
-        run: |
-          curl -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
-          echo 'export PATH="$HOME/.rokit/bin:$PATH"' >> $GITHUB_ENV
 
       - name: Install Necessary Tools
         run: rokit install
