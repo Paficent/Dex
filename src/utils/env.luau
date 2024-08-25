@@ -3,10 +3,11 @@ Environment.__index = Environment
 
 --// Locals
 local HttpService: HttpService = game:GetService("HttpService")
+local Config = shared.Main.Config
 local MissingEnv = {}
 local elevated
 
-Environment.IsElevated = function(self)
+Environment.IsElevated = function()
 	elevated = elevated ~= nil and elevated
 		or pcall(function()
 			local _ = game:GetService("CoreGui"):GetFullName()
@@ -39,11 +40,13 @@ do
 	Environment.makefolder = makefolder
 	Environment.listfiles = listfiles
 	Environment.loadfile = loadfile
-	Environment.saveinstance = saveinstance
+
+	Environment.decompile = Config.decompiler or decompile
+	Environment.saveinstance = Config.saveinstance or saveinstance
 
 	-- debug
-	Environment.getupvalues = debug.getupvalues or getupvalues or getupvals
-	Environment.getconstants = debug.getconstants or getconstants or getconsts
+	Environment.getupvalues = debug.getupvalues or getupvalues
+	Environment.getconstants = debug.getconstants or getconstants
 	Environment.islclosure = islclosure or is_l_closure or function(closure)
 		return not iscclosure(closure)
 	end
@@ -53,7 +56,7 @@ do
 
 	-- other
 	Environment.setfflag = setfflag
-	Environment.decompile = decompile
+
 	Environment.protectgui = protect_gui
 	Environment.gethui = gethui
 	Environment.setclipboard = setclipboard

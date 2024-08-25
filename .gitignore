@@ -1,6 +1,9 @@
-/build
+#Packages
 /src/packages
-# /.vscode
+/Packages
 
+#Misc
+# /.vscode
+/build
 sourcemap.json
 wally.lock

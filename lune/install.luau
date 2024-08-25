@@ -30,5 +30,8 @@ repeat
 until fs.isDir("Packages")
 task.wait(1)
 movePackages("Packages", "src/packages")
+if fs.isDir("Packages") then
+	fs.removeDir("Packages")
+end
 
 print(`Successfully installed rojo packages to {installDir}`)

@@ -5,11 +5,10 @@
 local LuaUtils = {}
 LuaUtils.__index = LuaUtils
 
-local Main = shared.Main
-local Config = Main.Config
+local env = require(script.Parent.env)
 
 local Compiler, Fiu
-if not Main.Elevated then
+if not env.IsElevated() then
 	Compiler = script:FindFirstChild("Compiler") and require(script.Compiler)
 	Fiu = script:FindFirstChild("Fiu") and require(script.Fiu)
 end
@@ -52,7 +51,7 @@ function LuaUtils:Decompile(): string
 		return self.Source
 	end
 
-	local ran, source = pcall(Config.decompiler, self.Script)
+	local ran, source = pcall(env.decompile, self.Script)
 	if not ran or not source then
 		source = "-- Dex failed to decompile this script"
 	end

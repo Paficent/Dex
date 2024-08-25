@@ -1,12 +1,13 @@
 ```lua
 local repo = "Paficent/Dex"
-local config = loadstring(game:HttpGet("https://raw.githubusercontent.com/%s/main/src/config.luau":format(repo)))(1)
+local config = loadstring(game:HttpGet(string.format("https://raw.githubusercontent.com/%s/main/src/config.luau", repo)))(1)
 
 local DexConfig = { -- I'll eventually write up a specific readme for the config format
-    decompiler = config.decompiler.default()
+    saveinstance = config.saveinstance.universalSyn(),
+    decompiler = config.decompiler.default(),
 }
 --// Studio dex will be loaded via a require
-loadstring(game:HttpGet(`https://github.com/{repo}/releases/latest/download/Dex.luau`))(DexConfig)
+loadstring(game:HttpGet(string.format("https://github.com/%s/releases/latest/download/Dex.luau", repo)))(DexConfig)
 ```
 
 
@@ -18,10 +19,10 @@ Everything here is ordered by priority
 - [ ] Update build script
     - [ ] Optimize build for client and studio
     - [ ] Fix whatever the fuck is causing wax to bundle RMD and API in the client build
-- [] Update Console Window
+- [ ] Update Console Window
     - [ ] change styling differently
     - [ ] implement a command input at the bottom
-- [] Modularize Code
+- [ ] Modularize Code
     - [x] Lib and UI
     - [ ] Explorer
     - [ ] Properties
@@ -32,7 +33,6 @@ Everything here is ordered by priority
     - [x] Roadmap (that's this)
     - [ ] Proper credits
     - [ ] Install and building instructions
-    - [ ]
 - [ ] Remote Spy
     - [ ] yh
 - [ ] Debugger
@@ -42,7 +42,7 @@ Everything here is ordered by priority
         - [ ] Get protos in GC
         - [ ] ModuleScripts and LocalScripts
 - [ ] Http Spy (Might scratch this cuz detections)
-    - [ ] Undetectable (hopefully) http spy
+    - [ ] Undetectable http spy
     - [ ] Possibly an option in the console window? not sure
     - [ ] Off by default
 - [ ] Rewrite init.luau
@@ -56,5 +56,4 @@ Everything here is ordered by priority
 - Run `lune run build` to build for production
 
 
-
-### For the love of god oogway, 
+### For the love of god please dont make your fork public
