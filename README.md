@@ -1,22 +1,22 @@
 ```lua
 local repo = "Paficent/Dex"
-local config = loadstring(game:HttpGet(string.format("https://raw.githubusercontent.com/%s/main/src/config.luau", repo)))(1)
 
-local DexConfig = { -- I'll eventually write up a specific readme for the config format
+local Dex = game:HttpGet(string.format("https://github.com/%s/releases/latest/download/Dex.luau", repo))
+local config = loadstring(game:HttpGet(string.format("https://raw.githubusercontent.com/%s/main/src/config.luau", repo)))(1)
+local DexConfig = {
     saveinstance = config.saveinstance.universalSyn(),
     decompiler = config.decompiler.default(),
 }
---// Studio dex will be loaded via a require
-loadstring(game:HttpGet(string.format("https://github.com/%s/releases/latest/download/Dex.luau", repo)))(DexConfig)
+
+loadstring(Dex)(DexConfig)
 ```
 
 ```lua
 local Dex = game:GetService("ReplicatedStorage").Dex
 local config = require(Dex.config)
-
 local Dexconfig = {
-	saveinstance = config.saveinstance.universalSyn(),
-	decompiler = config.decompiler.default(),
+    saveinstance = config.saveinstance.default(),
+    decompiler = config.decompiler.default(),
 }
 
 require(Dex)(DexConfig)
