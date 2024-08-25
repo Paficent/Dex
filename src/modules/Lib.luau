@@ -1,0 +1,573 @@
+-- Common Locals
+local Main = shared.Main
+local env, service, createSimple = shared.env, shared.service, shared.createSimple -- Main Locals
+
+local Lib = {}
+
+local renderStepped = service.RunService.RenderStepped
+local signalWait = renderStepped.wait
+
+-- Functions
+
+Lib.FormatLuaString = (function()
+	local string = string
+	local gsub = string.gsub
+	local format = string.format
+	local char = string.char
+	local cleanTable = { ['"'] = '\\"', ["\\"] = "\\\\" }
+	for i = 0, 31 do
+		cleanTable[char(i)] = "\\" .. format("%03d", i)
+	end
+	for i = 127, 255 do
+		cleanTable[char(i)] = "\\" .. format("%03d", i)
+	end
+
+	return function(str)
+		return gsub(str, '["\\\0-\31\127-\255]', cleanTable)
+	end
+end)()
+
+Lib.CheckMouseInGui = function(gui)
+	if gui == nil then
+		return false
+	end
+	local mouse = Main.Mouse
+	local guiPosition = gui.AbsolutePosition
+	local guiSize = gui.AbsoluteSize
+
+	return mouse.X >= guiPosition.X
+		and mouse.X < guiPosition.X + guiSize.X
+		and mouse.Y >= guiPosition.Y
+		and mouse.Y < guiPosition.Y + guiSize.Y
+end
+
+Lib.IsShiftDown = function()
+	return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+		or service.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+end
+
+Lib.IsCtrlDown = function()
+	return service.UserInputService:IsKeyDown(Enum.KeyCode.LeftControl)
+		or service.UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
+end
+
+Lib.CreateArrow = function(size, num, dir)
+	local max = num
+	local arrowFrame = createSimple("Frame", {
+		BackgroundTransparency = 1,
+		Name = "Arrow",
+		Size = UDim2.new(0, size, 0, size),
+	})
+	if dir == "up" then
+		for i = 1, num do
+			local newLine = createSimple("Frame", {
+				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
+				BorderSizePixel = 0,
+				Position = UDim2.new(
+					0,
+					math.floor(size / 2) - (i - 1),
+					0,
+					math.floor(size / 2) + i - math.floor(max / 2) - 1
+				),
+				Size = UDim2.new(0, i + (i - 1), 0, 1),
+				Parent = arrowFrame,
+			})
+		end
+		return arrowFrame
+	elseif dir == "down" then
+		for i = 1, num do
+			local newLine = createSimple("Frame", {
+				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
+				BorderSizePixel = 0,
+				Position = UDim2.new(
+					0,
+					math.floor(size / 2) - (i - 1),
+					0,
+					math.floor(size / 2) - i + math.floor(max / 2) + 1
+				),
+				Size = UDim2.new(0, i + (i - 1), 0, 1),
+				Parent = arrowFrame,
+			})
+		end
+		return arrowFrame
+	elseif dir == "left" then
+		for i = 1, num do
+			local newLine = createSimple("Frame", {
+				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
+				BorderSizePixel = 0,
+				Position = UDim2.new(
+					0,
+					math.floor(size / 2) + i - math.floor(max / 2) - 1,
+					0,
+					math.floor(size / 2) - (i - 1)
+				),
+				Size = UDim2.new(0, 1, 0, i + (i - 1)),
+				Parent = arrowFrame,
+			})
+		end
+		return arrowFrame
+	elseif dir == "right" then
+		for i = 1, num do
+			local newLine = createSimple("Frame", {
+				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
+				BorderSizePixel = 0,
+				Position = UDim2.new(
+					0,
+					math.floor(size / 2) - i + math.floor(max / 2) + 1,
+					0,
+					math.floor(size / 2) - (i - 1)
+				),
+				Size = UDim2.new(0, 1, 0, i + (i - 1)),
+				Parent = arrowFrame,
+			})
+		end
+		return arrowFrame
+	end
+	error("r u ok")
+end
+
+Lib.ParseXML = (function()
+	local func = function()
+		-- Only exists to parse RMD
+		-- from https://github.com/jonathanpoelen/xmlparser
+
+		local string, print, pairs = string, print, pairs
+
+		-- http://lua-users.org/wiki/StringTrim
+		local trim = function(s)
+			local from = s:match("^%s*()")
+			return from > #s and "" or s:match(".*%S", from)
+		end
+
+		local gtchar = string.byte(">", 1)
+		local slashchar = string.byte("/", 1)
+		local D = string.byte("D", 1)
+		local E = string.byte("E", 1)
+
+		function parse(s, evalEntities)
+			-- remove comments
+			s = s:gsub("<!%-%-(.-)%-%->", "")
+
+			local entities, tentities = {}
+
+			if evalEntities then
+				local pos = s:find("<[_%w]")
+				if pos then
+					s:sub(1, pos):gsub("<!ENTITY%s+([_%w]+)%s+(.)(.-)%2", function(name, q, entity)
+						entities[#entities + 1] = { name = name, value = entity }
+					end)
+					tentities = createEntityTable(entities)
+					s = replaceEntities(s:sub(pos), tentities)
+				end
+			end
+
+			local t, l = {}, {}
+
+			local addtext = function(txt)
+				txt = txt:match("^%s*(.*%S)") or ""
+				if #txt ~= 0 then
+					t[#t + 1] = { text = txt }
+				end
+			end
+
+			s:gsub("<([?!/]?)([-:_%w]+)%s*(/?>?)([^<]*)", function(type, name, closed, txt)
+				-- open
+				if #type == 0 then
+					local a = {}
+					if #closed == 0 then
+						local len = 0
+						for all, aname, _, value, starttxt in
+							string.gmatch(txt, "(.-([-_%w]+)%s*=%s*(.)(.-)%3%s*(/?>?))")
+						do
+							len = len + #all
+							a[aname] = value
+							if #starttxt ~= 0 then
+								txt = txt:sub(len + 1)
+								closed = starttxt
+								break
+							end
+						end
+					end
+					t[#t + 1] = { tag = name, attrs = a, children = {} }
+
+					if closed:byte(1) ~= slashchar then
+						l[#l + 1] = t
+						t = t[#t].children
+					end
+
+					addtext(txt)
+					-- close
+				elseif "/" == type then
+					t = l[#l]
+					l[#l] = nil
+
+					addtext(txt)
+					-- ENTITY
+				elseif "!" == type then
+					if E == name:byte(1) then
+						txt:gsub("([_%w]+)%s+(.)(.-)%2", function(name, q, entity)
+							entities[#entities + 1] = { name = name, value = entity }
+						end, 1)
+					end
+					-- elseif '?' == type then
+					--   print('?  ' .. name .. ' // ' .. attrs .. '$$')
+					-- elseif '-' == type then
+					--   print('comment  ' .. name .. ' // ' .. attrs .. '$$')
+					-- else
+					--   print('o  ' .. #p .. ' // ' .. name .. ' // ' .. attrs .. '$$')
+				end
+			end)
+
+			return { children = t, entities = entities, tentities = tentities }
+		end
+
+		function parseText(txt)
+			return parse(txt)
+		end
+
+		function defaultEntityTable()
+			return { quot = '"', apos = "'", lt = "<", gt = ">", amp = "&", tab = "\t", nbsp = " " }
+		end
+
+		function replaceEntities(s, entities)
+			return s:gsub("&([^;]+);", entities)
+		end
+
+		function createEntityTable(docEntities, resultEntities)
+			entities = resultEntities or defaultEntityTable()
+			for _, e in pairs(docEntities) do
+				e.value = replaceEntities(e.value, entities)
+				entities[e.name] = e.value
+			end
+			return entities
+		end
+
+		return parseText
+	end
+	local newEnv = setmetatable({}, { __index = getfenv() })
+	setfenv(func, newEnv)
+	return func()
+end)()
+
+Lib.FastWait = function(s)
+	if not s then
+		return signalWait(renderStepped)
+	end
+	local start = tick()
+	while tick() - start < s do
+		signalWait(renderStepped)
+	end
+end
+
+Lib.ButtonAnim = function(button, data)
+	local holding = false
+	local disabled = false
+	local mode = data and data.Mode or 1
+	local control = {}
+
+	if mode == 2 then
+		local lerpTo = data.LerpTo or Color3.new(0, 0, 0)
+		local delta = data.LerpDelta or 0.2
+		control.StartColor = data.StartColor or button.BackgroundColor3
+		control.PressColor = data.PressColor or control.StartColor:lerp(lerpTo, delta)
+		control.HoverColor = data.HoverColor or control.StartColor:lerp(control.PressColor, 0.6)
+		control.OutlineColor = data.OutlineColor
+	end
+
+	button.InputBegan:Connect(function(input)
+		if disabled then
+			return
+		end
+		if input.UserInputType == Enum.UserInputType.MouseMovement and not holding then
+			if mode == 1 then
+				button.BackgroundTransparency = 0.4
+			elseif mode == 2 then
+				button.BackgroundColor3 = control.HoverColor
+			end
+		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+			holding = true
+			if mode == 1 then
+				button.BackgroundTransparency = 0
+			elseif mode == 2 then
+				button.BackgroundColor3 = control.PressColor
+				if control.OutlineColor then
+					button.BorderColor3 = control.PressColor
+				end
+			end
+		end
+	end)
+
+	button.InputEnded:Connect(function(input)
+		if disabled then
+			return
+		end
+		if input.UserInputType == Enum.UserInputType.MouseMovement and not holding then
+			if mode == 1 then
+				button.BackgroundTransparency = 1
+			elseif mode == 2 then
+				button.BackgroundColor3 = control.StartColor
+			end
+		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+			holding = false
+			if mode == 1 then
+				button.BackgroundTransparency = Lib.CheckMouseInGui(button) and 0.4 or 1
+			elseif mode == 2 then
+				button.BackgroundColor3 = Lib.CheckMouseInGui(button) and control.HoverColor or control.StartColor
+				if control.OutlineColor then
+					button.BorderColor3 = control.OutlineColor
+				end
+			end
+		end
+	end)
+
+	control.Disable = function()
+		disabled = true
+		holding = false
+
+		if mode == 1 then
+			button.BackgroundTransparency = 1
+		elseif mode == 2 then
+			button.BackgroundColor3 = control.StartColor
+		end
+	end
+
+	control.Enable = function()
+		disabled = false
+	end
+
+	return control
+end
+
+Lib.FindAndRemove = function(t, item)
+	local pos = table.find(t, item)
+	if pos then
+		table.remove(t, pos)
+	end
+end
+
+Lib.AttachTo = function(obj, data)
+	local target, posOffX, posOffY, sizeOffX, sizeOffY, resize, con
+	local disabled = false
+
+	local function update()
+		if not obj or not target then
+			return
+		end
+
+		local targetPos = target.AbsolutePosition
+		local targetSize = target.AbsoluteSize
+		obj.Position = UDim2.new(0, targetPos.X + posOffX, 0, targetPos.Y + posOffY)
+		if resize then
+			obj.Size = UDim2.new(0, targetSize.X + sizeOffX, 0, targetSize.Y + sizeOffY)
+		end
+	end
+
+	local function setup(o, data)
+		obj = o
+		data = data or {}
+		target = data.Target
+		posOffX = data.PosOffX or 0
+		posOffY = data.PosOffY or 0
+		sizeOffX = data.SizeOffX or 0
+		sizeOffY = data.SizeOffY or 0
+		resize = data.Resize or false
+
+		if con then
+			con:Disconnect()
+			con = nil
+		end
+		if target then
+			con = target.Changed:Connect(function(prop)
+				if not disabled and prop == "AbsolutePosition" or prop == "AbsoluteSize" then
+					update()
+				end
+			end)
+		end
+
+		update()
+	end
+	setup(obj, data)
+
+	return {
+		SetData = function(obj, data)
+			setup(obj, data)
+		end,
+		Enable = function()
+			disabled = false
+			update()
+		end,
+		Disable = function()
+			disabled = true
+		end,
+		Destroy = function()
+			con:Disconnect()
+			con = nil
+		end,
+	}
+end
+
+Lib.ProtectedGuis = {}
+
+Lib.ShowGui = function(gui)
+	if env.protectgui then
+		env.protectgui(gui)
+	end
+	gui.Parent = Main.GuiHolder
+end
+
+Lib.ColorToBytes = function(col)
+	local round = math.round
+	return string.format("%d, %d, %d", round(col.r * 255), round(col.g * 255), round(col.b * 255))
+end
+
+Lib.ReadFile = function(filename)
+	if not env.readfile then
+		return
+	end
+
+	local s, contents = pcall(env.readfile, filename)
+	if s and contents then
+		return contents
+	end
+end
+
+Lib.DeferFunc = function(f, ...)
+	signalWait(renderStepped)
+	return f(...)
+end
+
+Lib.LoadCustomAsset = function(filepath)
+	if not env.getcustomasset or not env.isfile or not env.isfile(filepath) then
+		return
+	end
+
+	return env.getcustomasset(filepath)
+end
+
+Lib.FetchCustomAsset = function(url, filepath)
+	if not env.writefile then
+		return
+	end
+
+	local s, data = pcall(game.HttpGet, game, url)
+	if not s then
+		return
+	end
+
+	env.writefile(filepath, data)
+	return Lib.LoadCustomAsset(filepath)
+end
+
+Lib.Set = (function()
+	local funcs = {}
+
+	funcs.Add = function(self, obj)
+		if self.Map[obj] then
+			return
+		end
+
+		local list = self.List
+		list[#list + 1] = obj
+		self.Map[obj] = true
+		self.Changed:Fire()
+	end
+
+	funcs.AddTable = function(self, t)
+		local changed
+		local list, map = self.List, self.Map
+		for i = 1, #t do
+			local elem = t[i]
+			if not map[elem] then
+				list[#list + 1] = elem
+				map[elem] = true
+				changed = true
+			end
+		end
+		if changed then
+			self.Changed:Fire()
+		end
+	end
+
+	funcs.Remove = function(self, obj)
+		if not self.Map[obj] then
+			return
+		end
+
+		local list = self.List
+		local pos = table.find(list, obj)
+		if pos then
+			table.remove(list, pos)
+		end
+		self.Map[obj] = nil
+		self.Changed:Fire()
+	end
+
+	funcs.RemoveTable = function(self, t)
+		local changed
+		local list, map = self.List, self.Map
+		local removeSet = {}
+		for i = 1, #t do
+			local elem = t[i]
+			map[elem] = nil
+			removeSet[elem] = true
+		end
+
+		for i = #list, 1, -1 do
+			local elem = list[i]
+			if removeSet[elem] then
+				table.remove(list, i)
+				changed = true
+			end
+		end
+		if changed then
+			self.Changed:Fire()
+		end
+	end
+
+	funcs.Set = function(self, obj)
+		if #self.List == 1 and self.List[1] == obj then
+			return
+		end
+
+		self.List = { obj }
+		self.Map = { [obj] = true }
+		self.Changed:Fire()
+	end
+
+	funcs.SetTable = function(self, t)
+		local newList, newMap = {}, {}
+		self.List, self.Map = newList, newMap
+		table.move(t, 1, #t, 1, newList)
+		for i = 1, #t do
+			newMap[t[i]] = true
+		end
+		self.Changed:Fire()
+	end
+
+	funcs.Clear = function(self)
+		if #self.List == 0 then
+			return
+		end
+		self.List = {}
+		self.Map = {}
+		self.Changed:Fire()
+	end
+
+	local mt = { __index = funcs }
+
+	local function new()
+		local obj = setmetatable({
+			List = {},
+			Map = {},
+			Changed = Signal.new(),
+		}, mt)
+
+		return obj
+	end
+
+	return { new = new }
+end)()
+
+-- Classes
+
+return Lib

@@ -1,0 +1,12 @@
+{
+    "name": "Dex",
+    "tree": { 
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "Dex": {
+                "$path": "src/"
+            }
+        }
+    }
+}
