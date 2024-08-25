@@ -58,10 +58,6 @@ Everything here is ordered by priority
   - [ ] 3D Viewer
     - [ ] Use a viewport frame
     - [ ] Saveinstance within the viewer
-- [ ] Http Spy (Might scratch this cuz detections)
-  - [ ] Undetectable http spy
-  - [ ] Possibly an option in the console window? not sure
-  - [ ] Off by default
 
 ## Building for Local Development
 
