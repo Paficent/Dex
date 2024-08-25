@@ -20,7 +20,7 @@ permissions:
 jobs:
   create-release:
     name: Create Release
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Create Release
@@ -32,7 +32,7 @@ jobs:
   build-script:
     needs: ["create-release"]
     name: Bundle Dex
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +41,7 @@ jobs:
       - name: Setup RoKit
         run: |
           curl -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
-          echo 'export PATH="$HOME/.rokit/bin:$PATH"' >> $GITHUB_ENV
+          export PATH="$HOME/.rokit/bin:$PATH"
 
       - name: Install Neccessary Tools
         run: rokit install
