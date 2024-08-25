@@ -31,7 +31,7 @@ jobs:
 
   build-script:
     needs: ["create-release"]
-    name: Bundle Hub
+    name: Bundle Dex
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +41,7 @@ jobs:
       - name: Setup RoKit
         run: |
           curl -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
+          echo 'export PATH="$HOME/.rokit/bin:$PATH"' >> $GITHUB_ENV
 
       - name: Install Neccessary Tools
         run: rokit install
