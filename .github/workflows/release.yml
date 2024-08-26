@@ -43,7 +43,13 @@ jobs:
         uses: CompeyDev/setup-rokit@v0.1.2
 
       - name: Install Necessary Tools
-        run: rokit install
+        run: |
+          rokit trust Kampfkarren/selene
+          rokit trust UpliftGames/wally
+          rokit trust rojo-rbx/rojo
+          rokit trust lune-org/lune
+          rokit trust seaofvoices/darklua
+          rokit install
 
       - name: Install Wally Packages
         run: lune run install
