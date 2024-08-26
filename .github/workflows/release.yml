@@ -40,10 +40,7 @@ jobs:
           submodules: true
 
       - name: Setup RoKit
-        run: |
-          curl -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
-          echo 'export PATH="$HOME/.rokit/bin:$PATH"' >> $GITHUB_ENV
-          export PATH="$HOME/.rokit/bin:$PATH"
+        uses: CompeyDev/setup-rokit@v0.1.2
 
       - name: Install Necessary Tools
         run: rokit install
