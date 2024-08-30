@@ -1,4 +1,5 @@
 return [[
+
 <roblox
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
@@ -7013,6 +7014,12 @@ return [[
             <string name="Name">FallenPartsDestroyHeight</string>
           </Properties>
         </Item>
+        <Item class="ReflectionMetadataMember">
+          <Properties>
+            <string name="Name">PathfindingUseImprovedSearch</string>
+            <string name="FFlag">PathfindingUseImprovedSearch</string>
+          </Properties>
+        </Item>
       </Item>
     </Item>
 
@@ -7413,13 +7420,11 @@ return [[
         <Item class="ReflectionMetadataMember">
           <Properties>
             <string name="Name">SafeAreaCompatibility</string>
-            <string name="FFlag">GuiObjectSafeAreaBackgroundExtension</string>
           </Properties>
         </Item>
         <Item class="ReflectionMetadataMember">
           <Properties>
             <string name="Name">ClipToDeviceSafeArea</string>
-            <string name="FFlag">GuiObjectSafeAreaBackgroundExtension</string>
           </Properties>
         </Item>
         <Item class="ReflectionMetadataMember">
@@ -9843,4 +9848,6 @@ return [[
     </Item>
   </Item>
 </roblox>
+
+
 ]]

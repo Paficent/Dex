@@ -1393,7 +1393,7 @@ Main.LocalDepsUpToDate = function()
 end
 
 Main.Init = function(config: { any }?)
-	shared.Config = config or getDefaultConfig()
+	shared.Config = shared.Config or config or getDefaultConfig()
 	Services = require(script.utils.Services)
 	env = require(script.utils.env)
 
@@ -1528,17 +1528,17 @@ Main.Init = function(config: { any }?)
 end
 
 -- Start
--- local Dex
--- if pcall(function()
--- 	local _ = game:GetService("CoreGui"):GetFullName()
--- end) then
--- 	if getgenv and getgenv() then
--- 		getgenv().___dex___ = nil
--- 	end
--- 	Dex = Main.Init(getgenv().___dex___)
--- else
--- 	Dex = Main.Init
--- end
+local Dex
+if pcall(function()
+	local _ = game:GetService("CoreGui"):GetFullName()
+end) then
+	if getgenv and getgenv() then
+		getgenv().___dex___ = nil
+	end
+	Dex = Main.Init(getgenv().___dex___)
+else
+	Dex = Main.Init
+end
 
 -- return Dex
-return Main.Init
+return Dex

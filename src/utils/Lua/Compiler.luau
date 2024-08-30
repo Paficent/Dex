@@ -1,3 +1,5 @@
+return [[
+
 --!optimize 2
 --// LuauCeption - Compiler variant
 --// Luau 0.631 (caee04d82d014ed104dd63edec1710fb6ab5794c)
@@ -104747,3 +104749,5 @@ return {
 		memory = MEMORY_LIST[0]
 	}
 }
+
+]]
