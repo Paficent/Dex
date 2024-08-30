@@ -24,12 +24,12 @@ local function movePackages(srcDir, destDir)
 end
 
 print("Installing rojo packages")
-print(process.spawn("wally", { "install" }).stdout)
+process.spawn("wally", { "install" })
 repeat
 	task.wait()
 until fs.isDir("Packages")
-task.wait(1)
+task.wait(0.5)
 movePackages("Packages", "src/packages")
-print(process.spawn("rojo", { "sourcemap", "-o", "sourcemap.json" }).stdout)
+process.spawn("rojo", { "sourcemap", "-o", "sourcemap.json" })
 
 print(`Successfully installed rojo packages to {installDir}`)
