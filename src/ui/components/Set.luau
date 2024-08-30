@@ -2,7 +2,7 @@ local Signal = require(script.Parent.Parent.Parent.packages.Signal)
 
 local funcs = {}
 
-funcs.Add = function(self, obj)
+function funcs:Add(obj)
 	if self.Map[obj] then
 		return
 	end
@@ -13,59 +13,57 @@ funcs.Add = function(self, obj)
 	self.Changed:Fire()
 end
 
-funcs.AddTable = function(self, t)
-	local changed
+function funcs:AddTable(objects)
+	local hasChanged = false
 	local list, map = self.List, self.Map
-	for i = 1, #t do
-		local elem = t[i]
-		if not map[elem] then
-			list[#list + 1] = elem
-			map[elem] = true
-			changed = true
+	for _, obj in ipairs(objects) do
+		if not map[obj] then
+			list[#list + 1] = obj
+			map[obj] = true
+			hasChanged = true
 		end
 	end
-	if changed then
+	if hasChanged then
 		self.Changed:Fire()
 	end
 end
 
-funcs.Remove = function(self, obj)
+function funcs:Remove(obj)
 	if not self.Map[obj] then
 		return
 	end
 
 	local list = self.List
-	local pos = table.find(list, obj)
-	if pos then
-		table.remove(list, pos)
+	local position = table.find(list, obj)
+	if position then
+		table.remove(list, position)
 	end
 	self.Map[obj] = nil
 	self.Changed:Fire()
 end
 
-funcs.RemoveTable = function(self, t)
-	local changed
+function funcs:RemoveTable(objects)
+	local hasChanged = false
 	local list, map = self.List, self.Map
-	local removeSet = {}
-	for i = 1, #t do
-		local elem = t[i]
-		map[elem] = nil
-		removeSet[elem] = true
+	local removalSet = {}
+	for _, obj in ipairs(objects) do
+		map[obj] = nil
+		removalSet[obj] = true
 	end
 
 	for i = #list, 1, -1 do
-		local elem = list[i]
-		if removeSet[elem] then
+		local obj = list[i]
+		if removalSet[obj] then
 			table.remove(list, i)
-			changed = true
+			hasChanged = true
 		end
 	end
-	if changed then
+	if hasChanged then
 		self.Changed:Fire()
 	end
 end
 
-funcs.Set = function(self, obj)
+function funcs:Set(obj)
 	if #self.List == 1 and self.List[1] == obj then
 		return
 	end
@@ -75,17 +73,17 @@ funcs.Set = function(self, obj)
 	self.Changed:Fire()
 end
 
-funcs.SetTable = function(self, t)
+function funcs:SetTable(objects)
 	local newList, newMap = {}, {}
 	self.List, self.Map = newList, newMap
-	table.move(t, 1, #t, 1, newList)
-	for i = 1, #t do
-		newMap[t[i]] = true
+	table.move(objects, 1, #objects, 1, newList)
+	for _, obj in ipairs(objects) do
+		newMap[obj] = true
 	end
 	self.Changed:Fire()
 end
 
-funcs.Clear = function(self)
+function funcs:Clear()
 	if #self.List == 0 then
 		return
 	end

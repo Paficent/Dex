@@ -1,104 +1,111 @@
 local Services = require(script.Parent.Parent.Parent.utils.Services)
 local utils = require(script.Parent.Parent.Parent.utils)
 
-local TextService: TextService = Services.Get("TextService")
+local TextService: TextService = Services:Get("TextService")
 
 local Settings = shared.Settings
 
-local props = {
-	OffsetX = 0,
-	TextBox = newproxy(),
-	CursorPos = -1,
-	Gui = newproxy(),
-	View = newproxy(),
+local defaultProps = {
+	offsetX = 0,
+	textBox = newproxy(),
+	cursorPosition = -1,
+	gui = newproxy(),
+	view = newproxy(),
 }
-local funcs = {}
-funcs.Update = function(self)
-	local cursorPos = self.CursorPos or -1
-	local text = self.TextBox.Text
+
+local MAX_TEXT_WIDTH = 999999999
+local DEFAULT_TEXT_SIZE = Vector2.new(MAX_TEXT_WIDTH, 100)
+
+local methods = {}
+
+function methods:update()
+	local cursorPosition = self.cursorPosition or -1
+	local text = self.textBox.Text
+
 	if text == "" then
-		self.TextBox.Position = UDim2.new(0, 0, 0, 0)
-		return
-	end
-	if cursorPos == -1 then
+		self.textBox.Position = UDim2.new(0, 0, 0, 0)
 		return
 	end
 
-	local cursorText = text:sub(1, cursorPos - 1)
-	local pos = nil
-	local leftEnd = -self.TextBox.Position.X.Offset
-	local rightEnd = leftEnd + self.View.AbsoluteSize.X
+	if cursorPosition == -1 then
+		return
+	end
 
-	local totalTextSize =
-		TextService:GetTextSize(text, self.TextBox.TextSize, self.TextBox.Font, Vector2.new(999999999, 100)).X
+	local cursorText = text:sub(1, cursorPosition - 1)
+	local leftEnd = -self.textBox.Position.X.Offset
+	local rightEnd = leftEnd + self.view.AbsoluteSize.X
+
+	local totalTextSize = TextService:GetTextSize(text, self.textBox.TextSize, self.textBox.Font, DEFAULT_TEXT_SIZE).X
 	local cursorTextSize =
-		TextService:GetTextSize(cursorText, self.TextBox.TextSize, self.TextBox.Font, Vector2.new(999999999, 100)).X
+		TextService:GetTextSize(cursorText, self.textBox.TextSize, self.textBox.Font, DEFAULT_TEXT_SIZE).X
 
+	local positionOffset
 	if cursorTextSize > rightEnd then
-		pos = math.max(-1, cursorTextSize - self.View.AbsoluteSize.X + 2)
+		positionOffset = math.max(-1, cursorTextSize - self.view.AbsoluteSize.X + 2)
 	elseif cursorTextSize < leftEnd then
-		pos = math.max(-1, cursorTextSize - 2)
+		positionOffset = math.max(-1, cursorTextSize - 2)
 	elseif totalTextSize < rightEnd then
-		pos = math.max(-1, totalTextSize - self.View.AbsoluteSize.X + 2)
+		positionOffset = math.max(-1, totalTextSize - self.view.AbsoluteSize.X + 2)
 	end
 
-	if pos then
-		self.TextBox.Position = UDim2.new(0, -pos, 0, 0)
-		self.TextBox.Size = UDim2.new(1, pos, 1, 0)
+	if positionOffset then
+		self.textBox.Position = UDim2.new(0, -positionOffset, 0, 0)
+		self.textBox.Size = UDim2.new(1, positionOffset, 1, 0)
 	end
 end
 
-funcs.GetText = function(self)
-	return self.TextBox.Text
+function methods:getText()
+	return self.textBox.Text
 end
 
-funcs.SetText = function(self, text)
-	self.TextBox.Text = text
+function methods:setText(text)
+	self.textBox.Text = text
 end
 
-local mt = utils.getGuiMT(props, funcs)
+local metatable = utils.getGuiMT(defaultProps, methods)
 
-local function convert(textbox)
-	local obj = utils.initObj(props, mt)
+local function convertTextBox(textBox)
+	local instance = utils.initObj(defaultProps, metatable)
 
-	local view = Instance.new("Frame")
-	view.BackgroundTransparency = textbox.BackgroundTransparency
-	view.BackgroundColor3 = textbox.BackgroundColor3
-	view.BorderSizePixel = textbox.BorderSizePixel
-	view.BorderColor3 = textbox.BorderColor3
-	view.Position = textbox.Position
-	view.Size = textbox.Size
-	view.ClipsDescendants = true
-	view.Name = textbox.Name
-	textbox.BackgroundTransparency = 1
-	textbox.Position = UDim2.new(0, 0, 0, 0)
-	textbox.Size = UDim2.new(1, 0, 1, 0)
-	textbox.TextXAlignment = Enum.TextXAlignment.Left
-	textbox.Name = "Input"
+	local viewFrame = Instance.new("Frame")
+	viewFrame.BackgroundTransparency = textBox.BackgroundTransparency
+	viewFrame.BackgroundColor3 = textBox.BackgroundColor3
+	viewFrame.BorderSizePixel = textBox.BorderSizePixel
+	viewFrame.BorderColor3 = textBox.BorderColor3
+	viewFrame.Position = textBox.Position
+	viewFrame.Size = textBox.Size
+	viewFrame.ClipsDescendants = true
+	viewFrame.Name = textBox.Name
 
-	obj.TextBox = textbox
-	obj.View = view
-	obj.Gui = view
+	textBox.BackgroundTransparency = 1
+	textBox.Position = UDim2.new(0, 0, 0, 0)
+	textBox.Size = UDim2.new(1, 0, 1, 0)
+	textBox.TextXAlignment = Enum.TextXAlignment.Left
+	textBox.Name = "Input"
 
-	textbox.Changed:Connect(function(prop)
-		if prop == "Text" or prop == "CursorPosition" or prop == "AbsoluteSize" then
-			local cursorPos = obj.TextBox.CursorPosition
-			if cursorPos ~= -1 then
-				obj.CursorPos = cursorPos
+	instance.textBox = textBox
+	instance.view = viewFrame
+	instance.gui = viewFrame
+
+	textBox.Changed:Connect(function(property)
+		if property == "Text" or property == "CursorPosition" or property == "AbsoluteSize" then
+			local cursorPosition = instance.textBox.CursorPosition
+			if cursorPosition ~= -1 then
+				instance.cursorPosition = cursorPosition
 			end
-			obj:Update()
+			instance:update()
 		end
 	end)
 
-	obj:Update()
+	instance:update()
 
-	view.Parent = textbox.Parent
-	textbox.Parent = view
+	viewFrame.Parent = textBox.Parent
+	textBox.Parent = viewFrame
 
-	return obj
+	return instance
 end
 
-local function new()
+local function createTextBox()
 	local textBox = Instance.new("TextBox")
 	textBox.Size = UDim2.new(0, 100, 0, 20)
 	textBox.BackgroundColor3 = Settings.Theme.TextBox
@@ -108,7 +115,10 @@ local function new()
 	textBox.Font = Enum.Font.SourceSans
 	textBox.TextSize = 14
 	textBox.Text = ""
-	return convert(textBox)
+	return convertTextBox(textBox)
 end
 
-return { new = new, convert = convert }
+return {
+	new = createTextBox,
+	convert = convertTextBox,
+}

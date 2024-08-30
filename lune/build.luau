@@ -31,7 +31,7 @@ local toUpdate = {
 	{
 		file = "src/utils/Lua/Compiler.luau",
 		link = `https://github.com/RealEthanPlayzDev/LuauCeption/releases/latest/download/Luau.LuauCeption.Compiler.0.631.luau`,
-		format = true,
+		format = false,
 	},
 }
 

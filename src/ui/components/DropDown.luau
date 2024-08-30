@@ -15,41 +15,42 @@ local funcs = {
 	OnSelect = Signal.new(),
 }
 
-funcs.Update = function(self)
+function funcs:Update()
 	local options = self.Options
+	local label = self.GuiElems.Label
 
 	if #options > 0 then
 		if not self.Selected then
+			label.Text = self.CanBeEmpty and "- Select -" or options[1]
 			if not self.CanBeEmpty then
 				self.Selected = options[1]
-				self.GuiElems.Label.Text = options[1]
-			else
-				self.GuiElems.Label.Text = "- Select -"
 			end
 		else
-			self.GuiElems.Label.Text = self.Selected
+			label.Text = self.Selected
 		end
 	else
-		self.GuiElems.Label.Text = "- Select -"
+		label.Text = "- Select -"
 	end
 end
 
-funcs.ShowOptions = function(self)
+function funcs:ShowOptions()
 	local context = self.Context
+	local guiPosition = self.Gui.AbsolutePosition
+	local guiSize = self.Gui.AbsoluteSize
 
-	context.Width = self.Gui.AbsoluteSize.X
-	context.ReverseYOffset = self.Gui.AbsoluteSize.Y
-	context:Show(self.Gui.AbsolutePosition.X, self.Gui.AbsolutePosition.Y + context.ReverseYOffset)
+	context.Width = guiSize.X
+	context.ReverseYOffset = guiSize.Y
+	context:Show(guiPosition.X, guiPosition.Y + context.ReverseYOffset)
 end
 
-funcs.SetOptions = function(self, opts)
+function funcs:SetOptions(opts)
 	self.Options = opts
+	self.Context:Clear()
 
 	local context = self.Context
 	local options = self.Options
-	context:Clear()
 
-	local onClick = function(option)
+	local function onClick(option)
 		self.Selected = option
 		self.OnSelect:Fire(option)
 		self:Update()
@@ -66,31 +67,32 @@ funcs.SetOptions = function(self, opts)
 		})
 	end
 
-	for i = 1, #options do
-		context:Add({ Name = options[i], OnClick = onClick })
+	for _, option in ipairs(options) do
+		context:Add({ Name = option, OnClick = onClick })
 	end
 
 	self:Update()
 end
 
-funcs.SetSelected = function(self, opt)
+function funcs:SetSelected(opt)
 	self.Selected = type(opt) == "number" and self.Options[opt] or opt
 	self:Update()
 end
 
 local function new()
-	local f = Instance.new("TextButton")
-	f.AutoButtonColor = false
-	f.Text = ""
-	f.Size = UDim2.new(0, 100, 0, 20)
-	f.BackgroundColor3 = Settings.Theme.TextBox
-	f.BorderColor3 = Settings.Theme.Outline3
+	local button = Instance.new("TextButton")
+	button.AutoButtonColor = false
+	button.Text = ""
+	button.Size = UDim2.new(0, 100, 0, 20)
+	button.BackgroundColor3 = Settings.Theme.TextBox
+	button.BorderColor3 = Settings.Theme.Outline3
 
 	local label = require(script.Parent.Label).new()
 	label.Position = UDim2.new(0, 2, 0, 0)
 	label.Size = UDim2.new(1, -22, 1, 0)
 	label.TextTruncate = Enum.TextTruncate.AtEnd
-	label.Parent = f
+	label.Parent = button
+
 	local arrow = create({
 		{
 			1,
@@ -106,7 +108,7 @@ local function new()
 			2,
 			"Frame",
 			{
-				BackgroundColor3 = Color3.new(0.86274510622025, 0.86274510622025, 0.86274510622025),
+				BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 				BorderSizePixel = 0,
 				Parent = { 1 },
 				Position = UDim2.new(0, 8, 0, 9),
@@ -117,7 +119,7 @@ local function new()
 			3,
 			"Frame",
 			{
-				BackgroundColor3 = Color3.new(0.86274510622025, 0.86274510622025, 0.86274510622025),
+				BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 				BorderSizePixel = 0,
 				Parent = { 1 },
 				Position = UDim2.new(0, 7, 0, 8),
@@ -128,7 +130,7 @@ local function new()
 			4,
 			"Frame",
 			{
-				BackgroundColor3 = Color3.new(0.86274510622025, 0.86274510622025, 0.86274510622025),
+				BackgroundColor3 = Color3.fromRGB(220, 220, 220),
 				BorderSizePixel = 0,
 				Parent = { 1 },
 				Position = UDim2.new(0, 6, 0, 7),
@@ -136,12 +138,12 @@ local function new()
 			},
 		},
 	})
-	arrow.Parent = f
+	arrow.Parent = button
 
 	local obj = setmetatable(funcs, {})
-	obj.Gui = f
+	obj.Gui = button
 	obj.Anim = Lib.ButtonAnim(
-		f,
+		button,
 		{ Mode = 2, StartColor = Settings.Theme.TextBox, LerpTo = Settings.Theme.Button, LerpDelta = 0.15 }
 	)
 	obj.Context = require(script.Parent.ContextMenu).new()
@@ -149,9 +151,11 @@ local function new()
 	obj.Context.MaxHeight = 200
 	obj.Selected = nil
 	obj.GuiElems = { Label = label }
-	f.MouseButton1Down:Connect(function()
+
+	button.MouseButton1Down:Connect(function()
 		obj:ShowOptions()
 	end)
+
 	obj:Update()
 	return obj
 end

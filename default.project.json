@@ -1,1 +1,11 @@
-{"name": "Dex", "tree": { "$path": "src/" }}
+{"name": "Dex",
+    "tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"Dex": {
+				"$path": "src"
+			}
+		}
+	}
+}

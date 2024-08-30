@@ -2,7 +2,8 @@ local utils = require(script.Parent.Parent.Parent.utils)
 
 local Settings = shared.Settings
 
-local props, funcs = {}, {}
+local props = {}
+local funcs = {}
 
 local mt = utils.getGuiMT(props, funcs)
 
@@ -19,6 +20,7 @@ local function new()
 	local obj = setmetatable({
 		Gui = label,
 	}, mt)
+
 	return obj
 end
 

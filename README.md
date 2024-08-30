@@ -14,7 +14,7 @@ loadstring(Dex)(DexConfig)
 ```lua
 local Dex = game:GetService("ReplicatedStorage").Dex
 local config = require(Dex.config)
-local Dexconfig = {
+local DexConfig = {
     saveinstance = config.saveinstance.default(),
     decompiler = config.decompiler.default(),
 }

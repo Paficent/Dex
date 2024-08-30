@@ -2,8 +2,13 @@
 --!optimize 2
 --// Paficent \\-
 
---// Imports
-local env = require(script.Parent.env)
+local function clone(obj: Instance): Instance
+	if cloneref then
+		return cloneref(obj)
+	end
+
+	return obj
+end
 
 --// Module Declaration
 local Services = {}
@@ -13,9 +18,9 @@ setmetatable(Services, {
 	__index = function(self, name: string)
 		local service
 		if name == "VirtualInputManager" or name == "VirtualUser" then
-			service = env.cloneref(Instance.new(name))
+			service = clone(Instance.new(name))
 		else
-			service = env.cloneref(game:GetService(name))
+			service = clone(game:GetService(name))
 		end
 
 		rawset(self, name, service)

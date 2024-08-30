@@ -639,8 +639,6 @@ Explorer.NewListEntry = function(index)
 	local newEntry = entryTemplate:Clone()
 	newEntry.Position = UDim2.new(0, 0, 0, 20 * (index - 1))
 
-	local isRenaming = false
-
 	newEntry.InputBegan:Connect(function(input)
 		local node = tree[index + Explorer.Index]
 		if not node or selection.Map[node] or input.UserInputType ~= Enum.UserInputType.MouseMovement then
@@ -2126,9 +2124,7 @@ Explorer.DoSearch = function(query)
 		end
 
 		if env.IsElevated() then
-			local start = tick()
 			searchFunc, specFilters = Explorer.BuildSearchFunc(query)
-			--print("BUILD SEARCH",tick()-start)
 		else
 			searchFunc = defaultSearch
 		end
@@ -2623,7 +2619,7 @@ Explorer.Init = function()
 				Name = "SearchBox",
 				Parent = { 3 },
 				PlaceholderColor3 = Color3.new(0.39215689897537, 0.39215689897537, 0.39215689897537),
-				PlaceholderText = "Search workspace",
+				PlaceholderText = "Filter workspace (Ctrl+Shift+X)",
 				Position = UDim2.new(0, 4, 0, 0),
 				Size = UDim2.new(1, -24, 0, 18),
 				Text = "",
@@ -2821,7 +2817,7 @@ Explorer.Init = function()
 	else
 		for i = 1, #insts do
 			local obj = insts[i]
-			local s, parObj = pcall(ffa, obj, "Instance")
+			local _, parObj = pcall(ffa, obj, "Instance")
 			local par = nodes[parObj]
 			if not par then
 				continue

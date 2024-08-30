@@ -1,5 +1,4 @@
 local utils = require(script.Parent.Parent.Parent.utils)
-
 local Settings = shared.Settings
 
 local props, funcs = {}, {}
