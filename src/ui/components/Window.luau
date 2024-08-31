@@ -91,9 +91,6 @@ local function resizeHook(self, resizer, dir)
 						self.SizeX = self.SizeX + (isH and deltaX * signX or 0)
 						self.SizeY = self.SizeY + (isV and deltaY * signY or 0)
 						guiMain.Size = UDim2.new(0, self.SizeX, 0, self.Minimized and 20 or self.SizeY)
-
-						--if isH then self.SizeX = guiMain.AbsoluteSize.X end
-						--if isV then self.SizeY = guiMain.AbsoluteSize.Y end
 					end
 				end)
 			end
@@ -632,16 +629,6 @@ local function updateSideFrames(noTween)
 	leftSide.Frame.Resizer.Position = UDim2.new(0, leftSide.Width, 0, 0)
 	rightSide.Frame.Resizer.Position = UDim2.new(0, -5, 0, 0)
 
-	--leftSide.Frame.Visible = (#leftSide.Windows > 0)
-	--rightSide.Frame.Visible = (#rightSide.Windows > 0)
-
-	--[[if #leftSide.Windows > 0 and leftSide.Frame.Position == UDim2.new(0,-leftSide.Width-5,0,0) then
-				leftSide.Frame:TweenPosition(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)
-			elseif #leftSide.Windows == 0 and leftSide.Frame.Position == UDim2.new(0,0,0,0) then
-				leftSide.Frame:TweenPosition(UDim2.new(0,-leftSide.Width-5,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)
-			end
-			local rightTweenPos = (#rightSide.Windows == 0 and UDim2.new(1,5,0,0) or UDim2.new(1,-rightSide.Width,0,0))
-			rightSide.Frame:TweenPosition(rightTweenPos,Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)]]
 	local leftHidden = #leftSide.Windows == 0 or leftSide.Hidden
 	local rightHidden = #rightSide.Windows == 0 or rightSide.Hidden
 	local leftPos = (leftHidden and UDim2.new(0, -leftSide.Width - 10, 0, 0) or UDim2.new(0, 0, 0, 0))
@@ -814,7 +801,6 @@ local function renderSide(side, noTween) -- TODO: Use existing resizers
 		local size = UDim2.new(0, side.Width, 0, v.SizeY)
 		local pos = UDim2.new(sideFramePos.X.Scale, sideFramePos.X.Offset, 0, currentPos)
 		Lib.ShowGui(v.Gui)
-		--v.GuiElems.Main:TweenSizeAndPosition(size,pos,Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)
 		if noTween then
 			v.GuiElems.Main.Size = size
 			v.GuiElems.Main.Position = pos
@@ -840,9 +826,6 @@ local function renderSide(side, noTween) -- TODO: Use existing resizers
 			newTemplate.Parent = side.Frame
 		end
 	end
-
-	--side.Frame.Back.Position = UDim2.new(0,0,0,0)
-	--side.Frame.Back.Size = UDim2.new(0,side.Width,1,0)
 end
 
 local function updateSide(side, noTween)
@@ -888,11 +871,6 @@ updateWindows = function(noTween)
 		Lib.ShowGui(visibleWindows[i].Gui)
 		count = count + 1
 	end
-
-	--[[local leftTweenPos = (#leftSide.Windows == 0 and UDim2.new(0,-leftSide.Width-5,0,0) or UDim2.new(0,0,0,0))
-			leftSide.Frame:TweenPosition(leftTweenPos,Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)
-			local rightTweenPos = (#rightSide.Windows == 0 and UDim2.new(1,5,0,0) or UDim2.new(1,-rightSide.Width,0,0))
-			rightSide.Frame:TweenPosition(rightTweenPos,Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.3,true)]]
 end
 
 funcs.SetMinimized = function(self, set, mode)

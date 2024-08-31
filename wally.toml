@@ -6,7 +6,6 @@ authors = ["Paficent"]
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 private = true
-package_dir = "CustomPackages"
 
 [dependencies]
 Signal = "lucasmzreal/fastsignal@10.3.1"
