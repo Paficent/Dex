@@ -54,10 +54,10 @@ Everything here is ordered by priority
 - [ ] Rewrite init.luau
 - [ ] Plugin API
   - [ ] Robust and fully typed UI for interacting with Dex and creating Windows
-  - [ ] Remote Spy
-  - [ ] 3D Viewer
-    - [ ] Use a viewport frame
-    - [ ] Saveinstance within the viewer
+- [ ] Remote Spy
+- [ ] 3D Viewer
+  - [ ] Use a viewport frame
+  - [ ] Saveinstance within the viewer
 
 ## Building for Local Development
 
