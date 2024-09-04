@@ -22,6 +22,8 @@ local DexConfig = {
 require(Dex)(DexConfig)
 ```
 
+## Join our [Discord](https://discord.gg/5CH8CSw2vt)
+
 ## Building for Local Development
 
 - Install [Luau-LSP](https://github.com/JohnnyMorganz/luau-lsp) and optionally [Stylua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) if you plan to contribute to this project
