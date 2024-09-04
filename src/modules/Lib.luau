@@ -3,7 +3,6 @@ local Services = require(script.Parent.Parent.utils.Services)
 local env = require(script.Parent.Parent.utils.env)
 
 local Main = shared.Main
-local createSimple = shared.createSimple -- Main Locals
 
 local Lib = {}
 local renderStepped = Services.RunService.RenderStepped
@@ -53,103 +52,97 @@ Lib.IsCtrlDown = function()
 end
 
 Lib.CreateArrow = function(size, num, dir)
-	local max = num
-	local arrowFrame = createSimple("Frame", {
-		BackgroundTransparency = 1,
-		Name = "Arrow",
-		Size = UDim2.new(0, size, 0, size),
-	})
-	if dir == "up" then
-		for i = 1, num do
-			local newLine = createSimple("Frame", {
-				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
-				BorderSizePixel = 0,
-				Position = UDim2.new(
+	local arrowFrame = Instance.new("Frame")
+	arrowFrame.BackgroundTransparency = 1
+	arrowFrame.Name = "Arrow"
+	arrowFrame.Size = UDim2.new(0, size, 0, size)
+
+	local function createFrame(i)
+		local calculations = {
+			up = function()
+				return UDim2.new(
 					0,
 					math.floor(size / 2) - (i - 1),
 					0,
-					math.floor(size / 2) + i - math.floor(max / 2) - 1
+					math.floor(size / 2) + i - math.floor(num / 2) - 1
 				),
-				Size = UDim2.new(0, i + (i - 1), 0, 1),
-				Parent = arrowFrame,
-			})
-		end
-		return arrowFrame
-	elseif dir == "down" then
-		for i = 1, num do
-			local newLine = createSimple("Frame", {
-				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
-				BorderSizePixel = 0,
-				Position = UDim2.new(
+					UDim2.new(0, i + (i - 1), 0, 1)
+			end,
+			down = function()
+				return UDim2.new(
 					0,
 					math.floor(size / 2) - (i - 1),
 					0,
-					math.floor(size / 2) - i + math.floor(max / 2) + 1
+					math.floor(size / 2) - i + math.floor(num / 2) + 1
 				),
-				Size = UDim2.new(0, i + (i - 1), 0, 1),
-				Parent = arrowFrame,
-			})
-		end
-		return arrowFrame
-	elseif dir == "left" then
-		for i = 1, num do
-			local newLine = createSimple("Frame", {
-				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
-				BorderSizePixel = 0,
-				Position = UDim2.new(
+					UDim2.new(0, i + (i - 1), 0, 1)
+			end,
+			left = function()
+				return UDim2.new(
 					0,
-					math.floor(size / 2) + i - math.floor(max / 2) - 1,
+					math.floor(size / 2) + i - math.floor(num / 2) - 1,
 					0,
 					math.floor(size / 2) - (i - 1)
 				),
-				Size = UDim2.new(0, 1, 0, i + (i - 1)),
-				Parent = arrowFrame,
-			})
-		end
-		return arrowFrame
-	elseif dir == "right" then
-		for i = 1, num do
-			local newLine = createSimple("Frame", {
-				BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255),
-				BorderSizePixel = 0,
-				Position = UDim2.new(
+					UDim2.new(0, 1, 0, i + (i - 1))
+			end,
+			right = function()
+				return UDim2.new(
 					0,
-					math.floor(size / 2) - i + math.floor(max / 2) + 1,
+					math.floor(size / 2) - i + math.floor(num / 2) + 1,
 					0,
 					math.floor(size / 2) - (i - 1)
 				),
-				Size = UDim2.new(0, 1, 0, i + (i - 1)),
-				Parent = arrowFrame,
-			})
-		end
-		return arrowFrame
+					UDim2.new(0, 1, 0, i + (i - 1))
+			end,
+		}
+		local framePosition, frameSize = calculations[dir]()
+
+		local frame = Instance.new("Frame")
+		frame.BackgroundColor3 = Color3.new(220 / 255, 220 / 255, 220 / 255)
+		frame.BorderSizePixel = 0
+		frame.Position = framePosition
+		frame.Size = frameSize
+		frame.Parent = arrowFrame
 	end
-	error("r u ok")
+
+	for i = 1, num do
+		createFrame(i)
+	end
+
+	return arrowFrame
 end
 
-Lib.ParseXML = (function()
+Lib.ParseXML = (function() -- from https://github.com/jonathanpoelen/xmlparser
 	local func = function()
-		-- Only exists to parse RMD
-		-- from https://github.com/jonathanpoelen/xmlparser
-
-		local string, print, pairs = string, print, pairs
+		local string, pairs = string, pairs
 
 		-- http://lua-users.org/wiki/StringTrim
-		local trim = function(s)
-			local from = s:match("^%s*()")
-			return from > #s and "" or s:match(".*%S", from)
-		end
 
-		local gtchar = string.byte(">", 1)
 		local slashchar = string.byte("/", 1)
-		local D = string.byte("D", 1)
 		local E = string.byte("E", 1)
 
-		function parse(s, evalEntities)
-			-- remove comments
+		local function defaultEntityTable()
+			return { quot = '"', apos = "'", lt = "<", gt = ">", amp = "&", tab = "\t", nbsp = " " }
+		end
+
+		local function replaceEntities(s, entities)
+			return s:gsub("&([^;]+);", entities)
+		end
+
+		local function createEntityTable(docEntities, resultEntities)
+			local entities = resultEntities or defaultEntityTable()
+			for _, e in pairs(docEntities) do
+				e.value = replaceEntities(e.value, entities)
+				entities[e.name] = e.value
+			end
+			return entities
+		end
+
+		local function parse(s, evalEntities)
 			s = s:gsub("<!%-%-(.-)%-%->", "")
 
-			local entities, tentities = {}
+			local entities, tentities = {}, nil
 
 			if evalEntities then
 				local pos = s:find("<[_%w]")
@@ -172,7 +165,6 @@ Lib.ParseXML = (function()
 			end
 
 			s:gsub("<([?!/]?)([-:_%w]+)%s*(/?>?)([^<]*)", function(type, name, closed, txt)
-				-- open
 				if #type == 0 then
 					local a = {}
 					if #closed == 0 then
@@ -197,67 +189,37 @@ Lib.ParseXML = (function()
 					end
 
 					addtext(txt)
-					-- close
 				elseif "/" == type then
 					t = l[#l]
 					l[#l] = nil
 
 					addtext(txt)
-					-- ENTITY
 				elseif "!" == type then
 					if E == name:byte(1) then
 						txt:gsub("([_%w]+)%s+(.)(.-)%2", function(name, q, entity)
 							entities[#entities + 1] = { name = name, value = entity }
 						end, 1)
 					end
-					-- elseif '?' == type then
-					--   print('?  ' .. name .. ' // ' .. attrs .. '$$')
-					-- elseif '-' == type then
-					--   print('comment  ' .. name .. ' // ' .. attrs .. '$$')
-					-- else
-					--   print('o  ' .. #p .. ' // ' .. name .. ' // ' .. attrs .. '$$')
 				end
 			end)
 
 			return { children = t, entities = entities, tentities = tentities }
 		end
 
-		function parseText(txt)
-			return parse(txt)
+		return function(text)
+			return parse(text)
 		end
-
-		function defaultEntityTable()
-			return { quot = '"', apos = "'", lt = "<", gt = ">", amp = "&", tab = "\t", nbsp = " " }
-		end
-
-		function replaceEntities(s, entities)
-			return s:gsub("&([^;]+);", entities)
-		end
-
-		function createEntityTable(docEntities, resultEntities)
-			entities = resultEntities or defaultEntityTable()
-			for _, e in pairs(docEntities) do
-				e.value = replaceEntities(e.value, entities)
-				entities[e.name] = e.value
-			end
-			return entities
-		end
-
-		return parseText
 	end
 	local newEnv = setmetatable({}, { __index = getfenv() })
 	setfenv(func, newEnv)
 	return func()
 end)()
 
-Lib.FastWait = function(s)
+Lib.FastWait = function(s) -- This isn't faster??
 	if not s then
 		return signalWait(renderStepped)
 	end
-	local start = tick()
-	while tick() - start < s do
-		signalWait(renderStepped)
-	end
+	return task.wait(s)
 end
 
 Lib.ButtonAnim = function(button, data)
@@ -422,14 +384,12 @@ Lib.ColorToBytes = function(col)
 end
 
 Lib.ReadFile = function(filename)
-	if not env.readfile then
+	local ran, contents = pcall(env.readfile, filename)
+	if (env.readfile and ran and contents) == false then
 		return
 	end
 
-	local s, contents = pcall(env.readfile, filename)
-	if s and contents then
-		return contents
-	end
+	return contents
 end
 
 Lib.DeferFunc = function(f, ...)
@@ -458,7 +418,5 @@ Lib.FetchCustomAsset = function(url, filepath)
 	env.writefile(filepath, data)
 	return Lib.LoadCustomAsset(filepath)
 end
-
--- Classes
 
 return Lib

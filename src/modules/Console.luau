@@ -21,7 +21,7 @@ Console.Init = function()
 	window.PosY = 300 - window.SizeY / 2
 	Console.Window = window
 
-	local consoleFrame = require(script.Parent.Parent.ui.ConsoleFrame).new()
+	local consoleFrame = require(script.Parent.Parent.ui.CodeFrame).new()
 	consoleFrame.Frame.Position = UDim2.new(0, 0, 0, 20)
 	consoleFrame.Frame.Size = UDim2.new(1, 0, 1, -40)
 	consoleFrame.Frame.Parent = window.GuiElems.Content

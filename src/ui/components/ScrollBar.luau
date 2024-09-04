@@ -2,7 +2,7 @@ local Services = require(script.Parent.Parent.Parent.utils.Services)
 local Signal = require(script.Parent.Parent.Parent.packages.Signal)
 
 local Players: Players, UserInputService: UserInputService = Services:Get("Players", "UserInputService")
-local Lib, createSimple = shared.Apps.Lib, shared.createSimple
+local Lib = shared.Apps.Lib
 
 local funcs = {}
 local user = UserInputService
@@ -42,76 +42,73 @@ local function drawThumb(self)
 end
 
 local function createFrame(self)
-	local newFrame = createSimple("Frame", {
-		Style = 0,
-		Active = true,
-		AnchorPoint = Vector2.new(0, 0),
-		BackgroundColor3 = Color3.new(0.35294118523598, 0.35294118523598, 0.35294118523598),
-		BackgroundTransparency = 0,
-		BorderColor3 = Color3.new(0.10588236153126, 0.16470588743687, 0.20784315466881),
-		BorderSizePixel = 0,
-		ClipsDescendants = false,
-		Draggable = false,
-		Position = UDim2.new(1, -16, 0, 0),
-		Rotation = 0,
-		Selectable = false,
-		Size = UDim2.new(0, 16, 1, 0),
-		SizeConstraint = 0,
-		Visible = true,
-		ZIndex = 1,
-		Name = "ScrollBar",
-	})
+	local newFrame = Instance.new("Frame")
+	newFrame.Style = 0
+	newFrame.Active = true
+	newFrame.AnchorPoint = Vector2.new(0, 0)
+	newFrame.BackgroundColor3 = Color3.new(0.35294118523598, 0.35294118523598, 0.35294118523598)
+	newFrame.BackgroundTransparency = 0
+	newFrame.BorderColor3 = Color3.new(0.10588236153126, 0.16470588743687, 0.20784315466881)
+	newFrame.BorderSizePixel = 0
+	newFrame.ClipsDescendants = false
+	newFrame.Draggable = false
+	newFrame.Position = UDim2.new(1, -16, 0, 0)
+	newFrame.Rotation = 0
+	newFrame.Selectable = false
+	newFrame.Size = UDim2.new(0, 16, 1, 0)
+	newFrame.SizeConstraint = 0
+	newFrame.Visible = true
+	newFrame.ZIndex = 1
+	newFrame.Name = "ScrollBar"
 	local button1 = nil
 	local button2 = nil
 
 	if self.Horizontal then
 		newFrame.Size = UDim2.new(1, 0, 0, 16)
-		button1 = createSimple("ImageButton", {
-			Parent = newFrame,
-			Name = "Left",
-			Size = UDim2.new(0, 16, 0, 16),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-		})
+		button1 = Instance.new("ImageButton")
+		button1.Parent = newFrame
+		button1.Name = "Left"
+		button1.Size = UDim2.new(0, 16, 0, 16)
+		button1.BackgroundTransparency = 1
+		button1.BorderSizePixel = 0
+		button1.AutoButtonColor = false
 		createArrow(16, 4, "left").Parent = button1
-		button2 = createSimple("ImageButton", {
-			Parent = newFrame,
-			Name = "Right",
-			Position = UDim2.new(1, -16, 0, 0),
-			Size = UDim2.new(0, 16, 0, 16),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-		})
+
+		button2 = Instance.new("ImageButton")
+		button2.Parent = newFrame
+		button2.Name = "Right"
+		button2.Position = UDim2.new(1, -16, 0, 0)
+		button2.Size = UDim2.new(0, 16, 0, 16)
+		button2.BackgroundTransparency = 1
+		button2.BorderSizePixel = 0
+		button2.AutoButtonColor = false
 		createArrow(16, 4, "right").Parent = button2
 	else
 		newFrame.Size = UDim2.new(0, 16, 1, 0)
-		button1 = createSimple("ImageButton", {
-			Parent = newFrame,
-			Name = "Up",
-			Size = UDim2.new(0, 16, 0, 16),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-		})
+
+		button1 = Instance.new("ImageButton")
+		button1.Parent = newFrame
+		button1.Name = "Up"
+		button1.Size = UDim2.new(0, 16, 0, 16)
+		button1.BackgroundTransparency = 1
+		button1.BorderSizePixel = 0
+		button1.AutoButtonColor = false
 		createArrow(16, 4, "up").Parent = button1
-		button2 = createSimple("ImageButton", {
-			Parent = newFrame,
-			Name = "Down",
-			Position = UDim2.new(0, 0, 1, -16),
-			Size = UDim2.new(0, 16, 0, 16),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-		})
+
+		button2 = Instance.new("ImageButton")
+		button2.Parent = newFrame
+		button2.Name = "Down"
+		button2.Position = UDim2.new(0, 0, 1, -16)
+		button2.Size = UDim2.new(0, 16, 0, 16)
+		button2.BackgroundTransparency = 1
+		button2.BorderSizePixel = 0
+		button2.AutoButtonColor = false
 		createArrow(16, 4, "down").Parent = button2
 	end
 
-	local scrollThumbFrame = createSimple("Frame", {
-		BackgroundTransparency = 1,
-		Parent = newFrame,
-	})
+	local scrollThumbFrame = Instance.new("Frame")
+	scrollThumbFrame.BackgroundTransparency = 1
+	scrollThumbFrame.Parent = newFrame
 	if self.Horizontal then
 		scrollThumbFrame.Position = UDim2.new(0, 16, 0, 0)
 		scrollThumbFrame.Size = UDim2.new(1, -32, 1, 0)
@@ -120,18 +117,16 @@ local function createFrame(self)
 		scrollThumbFrame.Size = UDim2.new(1, 0, 1, -32)
 	end
 
-	local scrollThumb = createSimple("Frame", {
-		BackgroundColor3 = Color3.new(120 / 255, 120 / 255, 120 / 255),
-		BorderSizePixel = 0,
-		Parent = scrollThumbFrame,
-	})
+	local scrollThumb = Instance.new("Frame")
+	scrollThumb.BackgroundColor3 = Color3.new(120 / 255, 120 / 255, 120 / 255)
+	scrollThumb.BorderSizePixel = 0
+	scrollThumb.Parent = scrollThumbFrame
 
-	local markerFrame = createSimple("Frame", {
-		BackgroundTransparency = 1,
-		Name = "Markers",
-		Size = UDim2.new(1, 0, 1, 0),
-		Parent = scrollThumbFrame,
-	})
+	local markerFrame = Instance.new("Frame")
+	markerFrame.BackgroundTransparency = 1
+	markerFrame.Name = "Markers"
+	markerFrame.Size = UDim2.new(1, 0, 1, 0)
+	markerFrame.Parent = scrollThumbFrame
 
 	local buttonPress = false
 	local thumbPress = false
@@ -382,16 +377,16 @@ funcs.UpdateMarkers = function(self)
 
 	for i, v in pairs(self.Markers) do
 		if i < self.TotalSpace then
-			createSimple("Frame", {
-				BackgroundTransparency = 0,
-				BackgroundColor3 = v,
-				BorderSizePixel = 0,
-				Position = self.Horizontal and UDim2.new(i / self.TotalSpace, 0, 1, -6)
-					or UDim2.new(1, -6, i / self.TotalSpace, 0),
-				Size = self.Horizontal and UDim2.new(0, 1, 0, 6) or UDim2.new(0, 6, 0, 1),
-				Name = "Marker" .. tostring(i),
-				Parent = markerFrame,
-			})
+			local frame = Instance.new("Frame")
+
+			frame.BackgroundTransparency = 0
+			frame.BackgroundColor3 = v
+			frame.BorderSizePixel = 0
+			frame.Size = self.Horizontal and UDim2.new(0, 1, 0, 6) or UDim2.new(0, 6, 0, 1)
+			frame.Name = "Marker" .. tostring(i)
+			frame.Parent = markerFrame
+			frame.Position = self.Horizontal and UDim2.new(i / self.TotalSpace, 0, 1, -6)
+				or UDim2.new(1, -6, i / self.TotalSpace, 0)
 		end
 	end
 end

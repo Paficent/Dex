@@ -26,10 +26,11 @@ require(Dex)(DexConfig)
 
 Everything here is ordered by priority
 
-- [x] Add Executor Window
-  - [x] use Fiu and Luauception for studio compilation
-- [x] Fix Properties!!!
-    - [x] Broke something with the last few updates, need to fix
+- [ ] Rewrite Code
+  - [x] Lib and UI
+  - [ ] Explorer
+  - [ ] Properties
+  - [ ] init.luau
 - [ ] Update build script
   - [ ] Optimize build for client and studio
   - [ ] Fix whatever the fuck is causing wax to bundle RMD and API in the client build
@@ -37,24 +38,19 @@ Everything here is ordered by priority
   - [ ] Remove lua syntax highlighting
   - [ ] Add text color based on error message output
   - [ ] implement a command input at the bottom
-- [ ] Modularize Code
-  - [x] Lib and UI
-  - [ ] Explorer
-  - [ ] Properties
 - [ ] Update README
   - [x] Roadmap (that's this)
   - [ ] Proper credits
   - [ ] Install and building instructions
 - [ ] Debugger
+  - [ ] Remote Spy (with some sort of way of pausing interception and maybe even viewing them on like a graph idk explore this further)
   - [ ] Upvalue Scanner
   - [ ] Constant Scanner
   - [ ] Script Scanner
     - [ ] Get protos in GC
     - [ ] ModuleScripts and LocalScripts
-- [ ] Rewrite init.luau
 - [ ] Plugin API
   - [ ] Robust and fully typed UI for interacting with Dex and creating Windows
-- [ ] Remote Spy
 - [ ] 3D Viewer
   - [ ] Use a viewport frame
   - [ ] Saveinstance within the viewer
