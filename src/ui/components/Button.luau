@@ -1,41 +1,14 @@
 local Signal = require(script.Parent.Parent.Parent.packages.Signal)
-local utils = require(script.Parent.Parent.Parent.utils)
-
 local Settings, Lib = shared.Settings, shared.Apps.Lib
 
-local props = {
-	Gui = newproxy(),
-	Anim = newproxy(),
-	Disabled = false,
-	OnClick = Signal.new(),
-	OnDown = Signal.new(),
-	OnUp = Signal.new(),
-	AllowedButtons = { 1 },
-}
-local funcs = {}
-local tableFind = table.find
+-- Define the Button class
+local Button = {}
+Button.__index = Button
 
-funcs.Trigger = function(self, event, button)
-	if not self.Disabled and tableFind(self.AllowedButtons, button) then
-		self["On" .. event]:Fire(button)
-	end
-end
+-- Constructor for Button
+function Button.new()
+	local self = setmetatable({}, Button)
 
-funcs.SetDisabled = function(self, dis)
-	self.Disabled = dis
-
-	if dis then
-		self.Anim:Disable()
-		self.Gui.TextTransparency = 0.5
-	else
-		self.Anim.Enable()
-		self.Gui.TextTransparency = 0
-	end
-end
-
-local mt = utils.getGuiMT(props, funcs)
-
-local function new()
 	local b = Instance.new("TextButton")
 	b.AutoButtonColor = false
 	b.TextColor3 = Settings.Theme.Text
@@ -46,37 +19,67 @@ local function new()
 	b.BackgroundColor3 = Settings.Theme.Button
 	b.BorderColor3 = Settings.Theme.Outline2
 
-	local obj = utils.initObj(props, mt)
-	obj.Gui = b
-	obj.Anim = Lib.ButtonAnim(b, {
+	self.Gui = b
+	self.Anim = Lib.ButtonAnim(b, {
 		Mode = 2,
 		StartColor = Settings.Theme.Button,
 		HoverColor = Settings.Theme.ButtonHover,
 		PressColor = Settings.Theme.ButtonPress,
 		OutlineColor = Settings.Theme.Outline2,
 	})
+	self.Disabled = false
+	self.OnClick = Signal.new()
+	self.OnDown = Signal.new()
+	self.OnUp = Signal.new()
+	self.AllowedButtons = { 1 }
 
 	b.MouseButton1Click:Connect(function()
-		obj:Trigger("Click", 1)
+		self:Trigger("Click", 1)
 	end)
 	b.MouseButton1Down:Connect(function()
-		obj:Trigger("Down", 1)
+		self:Trigger("Down", 1)
 	end)
 	b.MouseButton1Up:Connect(function()
-		obj:Trigger("Up", 1)
+		self:Trigger("Up", 1)
 	end)
 
 	b.MouseButton2Click:Connect(function()
-		obj:Trigger("Click", 2)
+		self:Trigger("Click", 2)
 	end)
 	b.MouseButton2Down:Connect(function()
-		obj:Trigger("Down", 2)
+		self:Trigger("Down", 2)
 	end)
 	b.MouseButton2Up:Connect(function()
-		obj:Trigger("Up", 2)
+		self:Trigger("Up", 2)
 	end)
 
-	return obj
+	return self
 end
 
-return { new = new }
+-- Method to trigger events
+function Button:Trigger(event, button)
+	if not self.Disabled and table.find(self.AllowedButtons, button) then
+		if self["On" .. event] then
+			self["On" .. event]:Fire(button)
+		else
+			warn("Attempt to call missing method 'On" .. event .. "' of table")
+		end
+	end
+end
+
+-- Method to set disabled state
+function Button:SetDisabled(dis)
+	self.Disabled = dis
+
+	if dis then
+		self.Anim:Disable()
+		self.Gui.TextTransparency = 0.5
+	else
+		self.Anim:Enable()
+		self.Gui.TextTransparency = 0
+	end
+end
+
+return {
+	new = Button.new,
+}

@@ -1,20 +1,21 @@
-local utils = require(script.Parent.Parent.Parent.utils)
 local Settings = shared.Settings
 
-local props, funcs = {}, {}
+local Frame = {}
+Frame.__index = Frame
 
-local mt = utils.getGuiMT(props, funcs)
+function Frame.new()
+	local self = setmetatable({}, Frame)
 
-local function new()
 	local fr = Instance.new("Frame")
 	fr.BackgroundColor3 = Settings.Theme.Main1
 	fr.BorderColor3 = Settings.Theme.Outline1
 	fr.Size = UDim2.new(0, 50, 0, 50)
 
-	local obj = setmetatable({
-		Gui = fr,
-	}, mt)
-	return obj
+	self.Gui = fr
+
+	return self
 end
 
-return { new = new }
+return {
+	new = Frame.new,
+}

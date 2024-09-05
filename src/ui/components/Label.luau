@@ -1,13 +1,11 @@
-local utils = require(script.Parent.Parent.Parent.utils)
-
 local Settings = shared.Settings
 
-local props = {}
-local funcs = {}
+local Label = {}
+Label.__index = Label
 
-local mt = utils.getGuiMT(props, funcs)
+function Label.new()
+	local self = setmetatable({}, Label)
 
-local function new()
 	local label = Instance.new("TextLabel")
 	label.BackgroundTransparency = 1
 	label.TextXAlignment = Enum.TextXAlignment.Left
@@ -17,11 +15,11 @@ local function new()
 	label.Font = Enum.Font.SourceSans
 	label.TextSize = 14
 
-	local obj = setmetatable({
-		Gui = label,
-	}, mt)
+	self.Gui = label
 
-	return obj
+	return self
 end
 
-return { new = new }
+return {
+	new = Label.new,
+}

@@ -2,7 +2,6 @@ local Utils = {}
 
 -- TODO rewrite classes so this isnt neccessary anymore
 function Utils.initObj(props, mt)
-	local type = type
 	local function copy(t)
 		local res = {}
 		for i, v in t do
@@ -18,11 +17,16 @@ function Utils.initObj(props, mt)
 	local newObj = copy(props)
 	return setmetatable(newObj, mt)
 end
+local cnt = 0
 
 function Utils.getGuiMT(props, funcs)
 	return {
 		__index = function(self, ind)
 			if not props[ind] then
+				if cnt > 100 then
+					error(debug.traceback())
+				end
+				cnt += 1
 				return funcs[ind] or self.Gui[ind]
 			end
 			return nil

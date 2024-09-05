@@ -1,29 +1,18 @@
 local Services = require(script.Parent.Parent.Parent.utils.Services)
-local utils = require(script.Parent.Parent.Parent.utils)
-
-local TextService: TextService = Services:Get("TextService")
-
 local Settings = shared.Settings
 
-local defaultProps = {
-	offsetX = 0,
-	textBox = newproxy(),
-	cursorPosition = -1,
-	gui = newproxy(),
-	view = newproxy(),
-}
+local TextService = Services:Get("TextService")
 
 local MAX_TEXT_WIDTH = 999999999
 local DEFAULT_TEXT_SIZE = Vector2.new(MAX_TEXT_WIDTH, 100)
 
-local methods = {}
-
-function methods:update()
-	local cursorPosition = self.cursorPosition or -1
-	local text = self.textBox.Text
+-- Helper function to update the TextBox position and size
+local function update(instance)
+	local cursorPosition = instance.cursorPosition or -1
+	local text = instance.textBox.Text
 
 	if text == "" then
-		self.textBox.Position = UDim2.new(0, 0, 0, 0)
+		instance.textBox.Position = UDim2.new(0, 0, 0, 0)
 		return
 	end
 
@@ -32,42 +21,49 @@ function methods:update()
 	end
 
 	local cursorText = text:sub(1, cursorPosition - 1)
-	local leftEnd = -self.textBox.Position.X.Offset
-	local rightEnd = leftEnd + self.view.AbsoluteSize.X
+	local leftEnd = -instance.textBox.Position.X.Offset
+	local rightEnd = leftEnd + instance.view.AbsoluteSize.X
 
-	local totalTextSize = TextService:GetTextSize(text, self.textBox.TextSize, self.textBox.Font, DEFAULT_TEXT_SIZE).X
+	local totalTextSize =
+		TextService:GetTextSize(text, instance.textBox.TextSize, instance.textBox.Font, DEFAULT_TEXT_SIZE).X
 	local cursorTextSize =
-		TextService:GetTextSize(cursorText, self.textBox.TextSize, self.textBox.Font, DEFAULT_TEXT_SIZE).X
+		TextService:GetTextSize(cursorText, instance.textBox.TextSize, instance.textBox.Font, DEFAULT_TEXT_SIZE).X
 
 	local positionOffset
 	if cursorTextSize > rightEnd then
-		positionOffset = math.max(-1, cursorTextSize - self.view.AbsoluteSize.X + 2)
+		positionOffset = math.max(-1, cursorTextSize - instance.view.AbsoluteSize.X + 2)
 	elseif cursorTextSize < leftEnd then
 		positionOffset = math.max(-1, cursorTextSize - 2)
 	elseif totalTextSize < rightEnd then
-		positionOffset = math.max(-1, totalTextSize - self.view.AbsoluteSize.X + 2)
+		positionOffset = math.max(-1, totalTextSize - instance.view.AbsoluteSize.X + 2)
 	end
 
 	if positionOffset then
-		self.textBox.Position = UDim2.new(0, -positionOffset, 0, 0)
-		self.textBox.Size = UDim2.new(1, positionOffset, 1, 0)
+		instance.textBox.Position = UDim2.new(0, -positionOffset, 0, 0)
+		instance.textBox.Size = UDim2.new(1, positionOffset, 1, 0)
 	end
 end
 
-function methods:getText()
+-- Method to get the current text of the TextBox
+local function getText(self)
 	return self.textBox.Text
 end
 
-function methods:setText(text)
+-- Method to set the text of the TextBox
+local function setText(self, text)
 	self.textBox.Text = text
 end
 
-local metatable = utils.getGuiMT(defaultProps, methods)
-
+-- Function to convert an existing TextBox into a viewport TextBox
 local function convertTextBox(textBox)
-	local instance = utils.initObj(defaultProps, metatable)
+	local instance = {
+		cursorPosition = -1,
+		textBox = textBox,
+		view = Instance.new("Frame"),
+		gui = nil,
+	}
 
-	local viewFrame = Instance.new("Frame")
+	local viewFrame = instance.view
 	viewFrame.BackgroundTransparency = textBox.BackgroundTransparency
 	viewFrame.BackgroundColor3 = textBox.BackgroundColor3
 	viewFrame.BorderSizePixel = textBox.BorderSizePixel
@@ -83,8 +79,6 @@ local function convertTextBox(textBox)
 	textBox.TextXAlignment = Enum.TextXAlignment.Left
 	textBox.Name = "Input"
 
-	instance.textBox = textBox
-	instance.view = viewFrame
 	instance.gui = viewFrame
 
 	textBox.Changed:Connect(function(property)
@@ -93,18 +87,23 @@ local function convertTextBox(textBox)
 			if cursorPosition ~= -1 then
 				instance.cursorPosition = cursorPosition
 			end
-			instance:update()
+			update(instance)
 		end
 	end)
 
-	instance:update()
+	update(instance)
 
 	viewFrame.Parent = textBox.Parent
 	textBox.Parent = viewFrame
 
+	-- Adding methods to the instance
+	instance.GetText = getText
+	instance.SetText = setText
+
 	return instance
 end
 
+-- Function to create a new TextBox with default settings
 local function createTextBox()
 	local textBox = Instance.new("TextBox")
 	textBox.Size = UDim2.new(0, 100, 0, 20)
@@ -115,7 +114,10 @@ local function createTextBox()
 	textBox.Font = Enum.Font.SourceSans
 	textBox.TextSize = 14
 	textBox.Text = ""
-	return convertTextBox(textBox)
+	local instance = convertTextBox(textBox)
+	instance.GetText = getText
+	instance.SetText = setText
+	return instance
 end
 
 return {
