@@ -48,7 +48,7 @@ Join our [Discord](https://discord.gg/5CH8CSw2vt)
   - [ ] init.luau
 - [ ] Implement [Luau Syntax]:
   - [ ] Compound Operators
-  - [ ] Avoid using `next`, `ipairs` & `pairs`
+  - [x] Avoid using `next`, `ipairs` & `pairs`
   - [ ] Type-checking (only for Plugin API and utils)
   - [ ] `if-then-else` expressions
   - [ ] Floor division
