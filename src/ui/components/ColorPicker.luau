@@ -1362,7 +1362,7 @@ local function new()
 	window.Alignable = false
 	window:SetTitle("Color Picker")
 	window:Resize(450, 330)
-	for i, v in pairs(guiContents:GetChildren()) do
+	for i, v in guiContents:GetChildren() do
 		v.Parent = window.GuiElems.Content
 	end
 	newMt.Window = window
@@ -1738,7 +1738,7 @@ local function new()
 
 	local row = 0
 	local column = 0
-	for i, v in pairs(basicColors) do
+	for i, v in basicColors do
 		local newColor = colorChoice:Clone()
 		newColor.BackgroundColor3 = v
 		newColor.Position = UDim2.new(0, 1 + 30 * column, 0, 21 + 23 * row)

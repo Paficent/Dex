@@ -164,11 +164,11 @@ local function initBuiltIn()
 	local env = getfenv()
 	local type = type
 	local tostring = tostring
-	for name, _ in next, builtIns do
+	for name, _ in builtIns do
 		local envVal = env[name]
 		if type(envVal) == "table" then
 			local items = {}
-			for i, v in next, envVal do
+			for i, v in envVal do
 				items[i] = true
 			end
 			builtIns[name] = items
@@ -952,7 +952,7 @@ funcs.HighlightLine = function(self, line)
 	local lineStart = self.NewLines[line - 1] or 0
 
 	local preHighlightMap = {}
-	for pos, data in next, preHighlights do
+	for pos, data in preHighlights do
 		local relativePos = pos - lineStart
 		if relativePos < 1 then
 			currentType = data[1]
@@ -1309,7 +1309,7 @@ funcs.MakeRichTemplates = function(self)
 	local floor = math.floor
 	local templates = {}
 
-	for name, color in pairs(self.Colors) do
+	for name, color in self.Colors do
 		templates[name] = ('<font color="rgb(%s,%s,%s)">'):format(
 			floor(color.r * 255),
 			floor(color.g * 255),

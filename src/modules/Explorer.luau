@@ -495,7 +495,7 @@ Explorer.StartDrag = function(offX, offY)
 	local dragTree = treeFrame:Clone()
 	dragTree:ClearAllChildren()
 
-	for i, v in pairs(listEntries) do
+	for i, v in listEntries do
 		local node = tree[i + Explorer.Index]
 		if node and selection.Map[node] then
 			local clone = v:Clone()
@@ -936,7 +936,7 @@ Explorer.ViewNode = function(node)
 	Explorer.ForceUpdate(true)
 	local visibleSpace = scrollV.VisibleSpace
 
-	for i, v in next, tree do
+	for i, v in tree do
 		if v == node then
 			local relative = i - 1
 			if Explorer.Index > relative then
@@ -1264,7 +1264,7 @@ Explorer.InitRightClick = function()
 				node.Obj:Destroy()
 			end
 
-			for i, v in next, selection.List do
+			for i, v in selection.List do
 				if isa(v.Obj, "Model") then
 					ungroup(v)
 				end
@@ -1570,7 +1570,7 @@ Explorer.HideNilInstances = function()
 	table.clear(nilMap)
 
 	local disconnectCon = Instance.new("Folder").ChildAdded:Connect(function() end).Disconnect
-	for i, v in next, nilCons do
+	for i, v in nilCons do
 		disconnectCon(v[1])
 		disconnectCon(v[2])
 	end
@@ -1717,7 +1717,7 @@ Explorer.InitInsertObject = function()
 	})
 
 	local classes = {}
-	for i, class in next, API.Classes do
+	for i, class in API.Classes do
 		local tags = class.Tags
 		if not tags.NotCreatable and not tags.Service then
 			local rmdEntry = RMD.Classes[class.Name]
@@ -1775,7 +1775,7 @@ Explorer.SearchFilters = { -- TODO: Use data table (so we can disable some if fu
 			classQuery = lower(classQuery)
 
 			local className
-			for class, _ in pairs(API.Classes) do
+			for class, _ in API.Classes do
 				local cName = lower(class)
 				if cName == classQuery then
 					className = class
@@ -2016,13 +2016,13 @@ Explorer.BuildSearchFunc = function(query)
 	local finalHeaders = ""
 	local finalObjectDefs = ""
 
-	for setup, _ in next, setups do
+	for setup, _ in setups do
 		finalSetups = finalSetups .. setup .. "\n"
 	end
-	for header, _ in next, headers do
+	for header, _ in headers do
 		finalHeaders = finalHeaders .. header .. "\n"
 	end
-	for oDef, _ in next, objectDefs do
+	for oDef, _ in objectDefs do
 		finalObjectDefs = finalObjectDefs .. oDef .. "\n"
 	end
 
@@ -2398,7 +2398,7 @@ Explorer.InitDelCleaner = function()
 		while true do
 			local processed = false
 			local c = 0
-			for _, node in next, nodes do
+			for _, node in nodes do
 				if node.HasDel then
 					local delInd
 					for i = 1, #node do
@@ -2514,7 +2514,7 @@ Explorer.UpdateSelectionVisuals = function()
 	holder:ClearAllChildren()
 
 	-- Updates theme
-	for i, v in pairs(Explorer.SelectionVisualGui:GetChildren()) do
+	for i, v in Explorer.SelectionVisualGui:GetChildren() do
 		v.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 	end
 

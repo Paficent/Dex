@@ -118,7 +118,7 @@ end
 local function sideHasRoom(side, neededSize)
 	local maxY = sidesGui.AbsoluteSize.Y - (math.max(0, #side.Windows - 1) * 4)
 	local inc = 0
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		inc = inc + (v.MinY or 100)
 		if inc > maxY - neededSize then
 			return false
@@ -132,7 +132,7 @@ local function getSideInsertPos(side, curY)
 	local pos = #side.Windows + 1
 	local range = { 0, sidesGui.AbsoluteSize.Y }
 
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		local midPos = v.PosY + v.SizeY / 2
 		if curY <= midPos then
 			pos = i
@@ -676,7 +676,7 @@ end
 local function sideResized(side)
 	local currentPos = 0
 	local sideFramePos = getSideFramePos(side)
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		v.SizeX = side.Width
 		v.GuiElems.Main.Size = UDim2.new(0, side.Width, 0, v.SizeY)
 		v.GuiElems.Main.Position = UDim2.new(sideFramePos.X.Scale, sideFramePos.X.Offset, 0, currentPos)
@@ -784,10 +784,10 @@ local function renderSide(side, noTween) -- TODO: Use existing resizers
 	local currentPos = 0
 	local sideFramePos = getSideFramePos(side)
 	local template = side.WindowResizer:Clone()
-	for i, v in pairs(side.ResizeCons) do
+	for i, v in side.ResizeCons do
 		v:Disconnect()
 	end
-	for i, v in pairs(side.Frame:GetChildren()) do
+	for i, v in side.Frame:GetChildren() do
 		if v.Name == "WindowResizer" then
 			v:Destroy()
 		end
@@ -795,7 +795,7 @@ local function renderSide(side, noTween) -- TODO: Use existing resizers
 	side.ResizeCons = {}
 	side.Resizing = nil
 
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		v.SidePos = i
 		local isEnd = i == #side.Windows
 		local size = UDim2.new(0, side.Width, 0, v.SizeY)
@@ -835,10 +835,10 @@ local function updateSide(side, noTween)
 	local windows = side.Windows
 	local height = sidesGui.AbsoluteSize.Y - (math.max(0, #windows - 1) * 4)
 
-	for i, v in pairs(windows) do
+	for i, v in windows do
 		oldHeight = oldHeight + v.SizeY
 	end
-	for i, v in pairs(windows) do
+	for i, v in windows do
 		if i == #windows then
 			v.SizeY = height - currentPos
 			neededSize = math.max(0, (v.MinY or 100) - v.SizeY)
@@ -963,13 +963,13 @@ funcs.SetAligned = function(self, val)
 	self.GuiElems.Main.Active = not val
 	self.GuiElems.Main.Outlines.Visible = not val
 	if not val then
-		for i, v in pairs(leftSide.Windows) do
+		for i, v in leftSide.Windows do
 			if v == self then
 				table.remove(leftSide.Windows, i)
 				break
 			end
 		end
-		for i, v in pairs(rightSide.Windows) do
+		for i, v in rightSide.Windows do
 			if v == self then
 				table.remove(rightSide.Windows, i)
 				break
@@ -983,7 +983,7 @@ funcs.SetAligned = function(self, val)
 		updateWindows()
 	else
 		self:SetMinimized(false, 3)
-		for i, v in pairs(visibleWindows) do
+		for i, v in visibleWindows do
 			if v == self then
 				table.remove(visibleWindows, i)
 				break
@@ -1016,7 +1016,7 @@ funcs.AlignTo = function(self, side, pos, size, silent)
 	size = size or self.SizeY
 	if size > 0 and size <= 1 then
 		local totalSideHeight = 0
-		for i, v in pairs(side.Windows) do
+		for i, v in side.Windows do
 			totalSideHeight = totalSideHeight + v.SizeY
 		end
 		self.SizeY = (totalSideHeight > 0 and totalSideHeight * size * 2) or size
@@ -1028,7 +1028,7 @@ funcs.AlignTo = function(self, side, pos, size, silent)
 	self.Side = side
 	self.SizeX = side.Width
 	self.Gui.DisplayOrder = sideDisplayOrder + 1
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		v.Gui.DisplayOrder = sideDisplayOrder
 	end
 	pos = math.min(#side.Windows + 1, pos or 1)
@@ -1113,7 +1113,7 @@ funcs.DoTween = function(self, ...)
 end
 
 funcs.StopTweens = function(self)
-	for i, v in pairs(self.Tweens) do
+	for i, v in self.Tweens do
 		v:Cancel()
 	end
 	self.Tweens = {}
@@ -1190,7 +1190,7 @@ end
 static.ToggleSide = function(name)
 	local side = (name == "left" and leftSide or rightSide)
 	side.Hidden = not side.Hidden
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		if side.Hidden then
 			v.OnDeactivate:Fire()
 		else
@@ -1203,7 +1203,7 @@ end
 static.SetSideVisible = function(s, vis)
 	local side = (type(s) == "table" and s) or (s == "left" and leftSide or rightSide)
 	side.Hidden = not vis
-	for i, v in pairs(side.Windows) do
+	for i, v in side.Windows do
 		if side.Hidden then
 			v.OnDeactivate:Fire()
 		else

@@ -67,7 +67,7 @@ function funcs:SetOptions(opts)
 		})
 	end
 
-	for _, option in ipairs(options) do
+	for _, option in options do
 		context:Add({ Name = option, OnClick = onClick })
 	end
 

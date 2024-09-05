@@ -16,7 +16,7 @@ end
 function funcs:AddTable(objects)
 	local hasChanged = false
 	local list, map = self.List, self.Map
-	for _, obj in ipairs(objects) do
+	for _, obj in objects do
 		if not map[obj] then
 			list[#list + 1] = obj
 			map[obj] = true
@@ -46,7 +46,7 @@ function funcs:RemoveTable(objects)
 	local hasChanged = false
 	local list, map = self.List, self.Map
 	local removalSet = {}
-	for _, obj in ipairs(objects) do
+	for _, obj in objects do
 		map[obj] = nil
 		removalSet[obj] = true
 	end
@@ -77,7 +77,7 @@ function funcs:SetTable(objects)
 	local newList, newMap = {}, {}
 	self.List, self.Map = newList, newMap
 	table.move(objects, 1, #objects, 1, newList)
-	for _, obj in ipairs(objects) do
+	for _, obj in objects do
 		newMap[obj] = true
 	end
 	self.Changed:Fire()

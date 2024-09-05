@@ -348,22 +348,22 @@ funcs.Update = function(self, nocallback)
 	end
 
 	if self:CanScrollUp() then
-		for i, v in pairs(button1.Arrow:GetChildren()) do
+		for i, v in button1.Arrow:GetChildren() do
 			v.BackgroundTransparency = 0
 		end
 	else
 		button1.BackgroundTransparency = 1
-		for i, v in pairs(button1.Arrow:GetChildren()) do
+		for i, v in button1.Arrow:GetChildren() do
 			v.BackgroundTransparency = 0.5
 		end
 	end
 	if self:CanScrollDown() then
-		for i, v in pairs(button2.Arrow:GetChildren()) do
+		for i, v in button2.Arrow:GetChildren() do
 			v.BackgroundTransparency = 0
 		end
 	else
 		button2.BackgroundTransparency = 1
-		for i, v in pairs(button2.Arrow:GetChildren()) do
+		for i, v in button2.Arrow:GetChildren() do
 			v.BackgroundTransparency = 0.5
 		end
 	end
@@ -375,7 +375,7 @@ funcs.UpdateMarkers = function(self)
 	local markerFrame = self.GuiElems.MarkerFrame
 	markerFrame:ClearAllChildren()
 
-	for i, v in pairs(self.Markers) do
+	for i, v in self.Markers do
 		if i < self.TotalSpace then
 			local frame = Instance.new("Frame")
 
@@ -433,10 +433,10 @@ funcs.Texture = function(self, data)
 	self.Gui.BackgroundColor3 = data.FrameColor or Color3.new(0, 0, 0)
 	self.GuiElems.Button1.BackgroundColor3 = data.ButtonColor or Color3.new(0, 0, 0)
 	self.GuiElems.Button2.BackgroundColor3 = data.ButtonColor or Color3.new(0, 0, 0)
-	for i, v in pairs(self.GuiElems.Button1.Arrow:GetChildren()) do
+	for i, v in self.GuiElems.Button1.Arrow:GetChildren() do
 		v.BackgroundColor3 = data.ArrowColor or Color3.new(0, 0, 0)
 	end
-	for i, v in pairs(self.GuiElems.Button2.Arrow:GetChildren()) do
+	for i, v in self.GuiElems.Button2.Arrow:GetChildren() do
 		v.BackgroundColor3 = data.ArrowColor or Color3.new(0, 0, 0)
 	end
 end

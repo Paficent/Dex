@@ -70,7 +70,7 @@ funcs.Remove = function(self, item)
 		return
 	end
 
-	for i, v in pairs(self.ItemCons[item]) do
+	for i, v in self.ItemCons[item] do
 		v:Disconnect()
 	end
 	self.ItemCons[item] = nil

@@ -277,7 +277,7 @@ local function new()
 	window:SetTitle("ColorSequence Editor")
 	newMt.Window = window
 	newMt.Gui = window.Gui
-	for i, v in pairs(guiContents:GetChildren()) do
+	for i, v in guiContents:GetChildren() do
 		v.Parent = window.GuiElems.Content
 	end
 	local gui = window.Gui
@@ -323,7 +323,7 @@ local function new()
 		table.sort(colors, function(a, b)
 			return a[2] < b[2]
 		end)
-		for i, v in pairs(colors) do
+		for i, v in colors do
 			table.insert(newPoints, ColorSequenceKeypoint.new(v[2], v[1]))
 		end
 		newMt.Sequence = ColorSequence.new(newPoints)
@@ -407,7 +407,7 @@ local function new()
 	end
 
 	local function placeArrows()
-		for i, v in pairs(colors) do
+		for i, v in colors do
 			v[3] = placeArrow(math.floor((colorLine.AbsoluteSize.X - 1) * v[2]) + 1, v)
 		end
 	end
@@ -425,14 +425,14 @@ local function new()
 
 	local function loadSequence(self, seq)
 		resetSequence = seq
-		for i, v in pairs(colors) do
+		for i, v in colors do
 			if v[3] then
 				v[3]:Destroy()
 			end
 		end
 		colors = {}
 		currentlySelected = nil
-		for i, v in pairs(seq.Keypoints) do
+		for i, v in seq.Keypoints do
 			local newPoint = { v.Value, v.Time }
 			newPoint[3] = placeArrow(v.Time, newPoint)
 			table.insert(colors, newPoint)
@@ -473,7 +473,7 @@ local function new()
 			local raw = relativeX / maxSize
 			local fromColor = nil
 			local toColor = nil
-			for i, col in pairs(colors) do
+			for i, col in colors do
 				if col[2] >= raw then
 					fromColor = colors[math.max(i - 1, 1)]
 					toColor = colors[i]
@@ -508,7 +508,7 @@ local function new()
 	colorLine.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			local inArrow = false
-			for i, v in pairs(colors) do
+			for i, v in colors do
 				if Lib.CheckMouseInGui(v[3]) then
 					inArrow = v[3]
 				end
@@ -555,7 +555,7 @@ local function new()
 
 	deleteButton.MouseButton1Click:Connect(function()
 		if currentPoint and currentPoint ~= beginPoint and currentPoint ~= endPoint then
-			for i, v in pairs(colors) do
+			for i, v in colors do
 				if v == currentPoint then
 					v[3]:Destroy()
 					table.remove(colors, i)

@@ -20,7 +20,7 @@ Executor.Init = function()
 			return
 		end
 
-		for i, tab in ipairs(Tabs) do --Modify old tabs
+		for i, tab in Tabs do -- Modify old tabs
 			if (1 / (#Tabs + 2)) * (i - 1) ~= 0 then
 				tab.Button.Position = UDim2.new((1 / (#Tabs + 2)) * (i - 1), 0, 0, 0)
 			end

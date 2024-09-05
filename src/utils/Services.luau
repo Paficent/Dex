@@ -31,7 +31,7 @@ setmetatable(Services, {
 	__call = function(self, ...: string)
 		local toReturn: { any } = {}
 
-		for _, serviceName in ipairs({ ... }) do
+		for _, serviceName in { ... } do
 			table.insert(toReturn, self[serviceName])
 		end
 
@@ -39,11 +39,11 @@ setmetatable(Services, {
 	end,
 })
 
--- Alternative Syntax, proxy for __call
+-- Alternative Syntax
 function Services:Get(...: string)
 	local toReturn: { any } = {}
 
-	for _, serviceName in ipairs({ ... }) do
+	for _, serviceName in { ... } do
 		table.insert(toReturn, self[serviceName])
 	end
 

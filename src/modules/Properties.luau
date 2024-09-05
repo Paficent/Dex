@@ -502,7 +502,7 @@ Properties.ShowExplorerProps = function()
 
 		if showingAttrs and attrCount < maxAttrs then
 			local attrs = getAttributes(obj)
-			for name, val in pairs(attrs) do
+			for name, val in attrs do
 				local typ = typeof(val)
 				if not foundAttrs[name] then
 					local category = (typ == "Instance" and "Class") or (typ == "EnumItem" and "Enum") or "Other"
@@ -596,7 +596,7 @@ end
 
 Properties.MakeSubProp = function(prop, subName, valueType, displayName)
 	local subProp = {}
-	for i, v in pairs(prop) do
+	for i, v in prop do
 		subProp[i] = v
 	end
 	subProp.RootType = subProp.RootType or subProp.ValueType
@@ -1222,7 +1222,7 @@ Properties.DisplayEnumDropdown = function(entryIndex)
 	end
 
 	local sorted = {}
-	for name, enum in next, enum:GetEnumItems() do
+	for name, enum in enum:GetEnumItems() do
 		sorted[#sorted + 1] = enum
 	end
 	table.sort(sorted, function(a, b)
@@ -1271,7 +1271,7 @@ Properties.DisplayBrickColorEditor = function(prop, entryIndex, col)
 		editor.OnMoreColors:Connect(function() -- TODO: Special Case BasePart.BrickColor to BasePart.Color
 			editor:Close()
 			local colProp
-			for i, v in pairs(API.Classes.BasePart.Properties) do
+			for i, v in API.Classes.BasePart.Properties do
 				if v.Name == "Color" then
 					colProp = v
 					break
@@ -1913,7 +1913,7 @@ Properties.SetProp = function(prop, val, noupdate, prevAttribute)
 					elseif rootTypeName == "Faces" then
 						local faces = {}
 						local faceList = { "Back", "Bottom", "Front", "Left", "Right", "Top" }
-						for _, face in pairs(faceList) do
+						for _, face in faceList do
 							local val
 							if subName == "." .. face then
 								val = setVal
@@ -1928,7 +1928,7 @@ Properties.SetProp = function(prop, val, noupdate, prevAttribute)
 					elseif rootTypeName == "Axes" then
 						local axes = {}
 						local axesList = { "X", "Y", "Z" }
-						for _, axe in pairs(axesList) do
+						for _, axe in axesList do
 							local val
 							if subName == "." .. axe then
 								val = setVal
@@ -2615,7 +2615,7 @@ Properties.Init = function() -- TODO: MAKE BETTER
 
 	-- Vars
 	categoryOrder = API.CategoryOrder
-	for category, _ in next, categoryOrder do
+	for category, _ in categoryOrder do
 		if not Properties.CollapsedCategories[category] then
 			expanded["CAT_" .. category] = true
 		end

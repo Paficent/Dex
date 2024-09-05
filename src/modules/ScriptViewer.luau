@@ -8,7 +8,7 @@ local window, currentFrame
 local Tabs, Scripts = {}, {}
 
 local function addNewTab(Script: LocalScript | ModuleScript)
-	for i, tab in ipairs(Tabs) do --Modify old tabs
+	for i, tab in Tabs do --Modify old tabs
 		if #Tabs >= 12 then
 			Tabs[i].Text = ""
 		end

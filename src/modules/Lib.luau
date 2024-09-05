@@ -115,8 +115,6 @@ end
 
 Lib.ParseXML = (function() -- from https://github.com/jonathanpoelen/xmlparser
 	local func = function()
-		local string, pairs = string, pairs
-
 		-- http://lua-users.org/wiki/StringTrim
 
 		local slashchar = string.byte("/", 1)
@@ -132,7 +130,7 @@ Lib.ParseXML = (function() -- from https://github.com/jonathanpoelen/xmlparser
 
 		local function createEntityTable(docEntities, resultEntities)
 			local entities = resultEntities or defaultEntityTable()
-			for _, e in pairs(docEntities) do
+			for _, e in docEntities do
 				e.value = replaceEntities(e.value, entities)
 				entities[e.name] = e.value
 			end

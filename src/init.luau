@@ -11,12 +11,12 @@ do
 	shared.Settings = {}
 	shared.create = function(data)
 		local insts = {}
-		for i, v in pairs(data) do
+		for i, v in data do
 			insts[v[1]] = Instance.new(v[2])
 		end
 
-		for _, v in pairs(data) do
-			for prop, val in pairs(v[3]) do
+		for _, v in data do
+			for prop, val in v[3] do
 				if type(val) == "table" then
 					insts[v[1]][prop] = insts[val[1]]
 				else
@@ -158,7 +158,7 @@ Main.LoadModule = function(name)
 end
 
 Main.LoadModules = function()
-	for i, v in pairs(Main.ModuleList) do
+	for i, v in Main.ModuleList do
 		local s, e = pcall(Main.LoadModule, v)
 		if not s then
 			Main.Error("FAILED LOADING " .. v .. " CAUSE " .. e)
@@ -180,8 +180,7 @@ Main.LoadSettings = function()
 	if s and data and data ~= "" then
 		local _, decoded = Services.HttpService:JSONDecode(data)
 		if s and decoded then
-			for i, v in next, decoded do
-			end
+			-- TODO
 		else
 			-- TODO: Notification
 		end
@@ -192,7 +191,7 @@ end
 
 Main.ResetSettings = function()
 	local function recur(t, res)
-		for set, val in pairs(t) do
+		for set, val in t do
 			if type(val) == "table" and val._Recurse then
 				if type(res[set]) ~= "table" then
 					res[set] = {}
@@ -246,7 +245,7 @@ Main.FetchAPI = function()
 		table.insert(t, pos, item)
 	end
 
-	for _, class in pairs(api.Classes) do
+	for _, class in api.Classes do
 		local newClass = {}
 		newClass.Name = class.Name
 		newClass.Superclass = class.Superclass
@@ -257,18 +256,18 @@ Main.FetchAPI = function()
 		newClass.Tags = {}
 
 		if class.Tags then
-			for c, tag in pairs(class.Tags) do
+			for c, tag in class.Tags do
 				newClass.Tags[tag] = true
 			end
 		end
-		for __, member in pairs(class.Members) do
+		for __, member in class.Members do
 			local newMember = {}
 			newMember.Name = member.Name
 			newMember.Class = class.Name
 			newMember.Security = member.Security
 			newMember.Tags = {}
 			if member.Tags then
-				for c, tag in pairs(member.Tags) do
+				for c, tag in member.Tags do
 					newMember.Tags[tag] = true
 				end
 			end
@@ -288,13 +287,13 @@ Main.FetchAPI = function()
 			elseif mType == "Function" then
 				newMember.Parameters = {}
 				newMember.ReturnType = member.ReturnType.Name
-				for c, param in pairs(member.Parameters) do
+				for c, param in member.Parameters do
 					table.insert(newMember.Parameters, { Name = param.Name, Type = param.Type.Name })
 				end
 				table.insert(newClass.Functions, newMember)
 			elseif mType == "Event" then
 				newMember.Parameters = {}
-				for c, param in pairs(member.Parameters) do
+				for c, param in member.Parameters do
 					table.insert(newMember.Parameters, { Name = param.Name, Type = param.Type.Name })
 				end
 				table.insert(newClass.Events, newMember)
@@ -304,22 +303,22 @@ Main.FetchAPI = function()
 		classes[class.Name] = newClass
 	end
 
-	for _, class in pairs(classes) do
+	for _, class in classes do
 		class.Superclass = classes[class.Superclass]
 	end
 
-	for _, enum in pairs(api.Enums) do
+	for _, enum in api.Enums do
 		local newEnum = {}
 		newEnum.Name = enum.Name
 		newEnum.Items = {}
 		newEnum.Tags = {}
 
 		if enum.Tags then
-			for c, tag in pairs(enum.Tags) do
+			for c, tag in enum.Tags do
 				newEnum.Tags[tag] = true
 			end
 		end
-		for __, item in pairs(enum.Items) do
+		for __, item in enum.Items do
 			local newItem = {}
 			newItem.Name = item.Name
 			newItem.Value = item.Value
@@ -337,7 +336,7 @@ Main.FetchAPI = function()
 
 		local currentClass = classes[class]
 		while currentClass do
-			for _, entry in pairs(currentClass[member]) do
+			for _, entry in currentClass[member] do
 				result[#result + 1] = entry
 			end
 			currentClass = currentClass.Superclass
@@ -404,13 +403,13 @@ Main.FetchRMD = function()
 	local propertyOrders = {}
 
 	local classes, enums = {}, {}
-	for _, class in pairs(classList) do
+	for _, class in classList do
 		local className = ""
-		for _, child in pairs(class.children) do
+		for _, child in class.children do
 			if child.tag == "Properties" then
 				local data = { Properties = {}, Functions = {} }
 				local props = child.children
-				for _, prop in pairs(props) do
+				for _, prop in props do
 					local name = prop.attrs.name
 					name = name:sub(1, 1):upper() .. name:sub(2)
 					data[name] = prop.children[1].text
@@ -419,12 +418,12 @@ Main.FetchRMD = function()
 				classes[className] = data
 			elseif child.attrs.class == "ReflectionMetadataProperties" then
 				local members = child.children
-				for _, member in pairs(members) do
+				for _, member in members do
 					if member.attrs.class == "ReflectionMetadataMember" then
 						local data = {}
 						if member.children[1].tag == "Properties" then
 							local props = member.children[1].children
-							for _, prop in pairs(props) do
+							for _, prop in props do
 								if prop.attrs then
 									local name = prop.attrs.name
 									name = name:sub(1, 1):upper() .. name:sub(2)
@@ -445,12 +444,12 @@ Main.FetchRMD = function()
 				end
 			elseif child.attrs.class == "ReflectionMetadataFunctions" then
 				local members = child.children
-				for _, member in pairs(members) do
+				for _, member in members do
 					if member.attrs.class == "ReflectionMetadataMember" then
 						local data = {}
 						if member.children[1].tag == "Properties" then
 							local props = member.children[1].children
-							for _, prop in pairs(props) do
+							for _, prop in props do
 								if prop.attrs then
 									local name = prop.attrs.name
 									name = name:sub(1, 1):upper() .. name:sub(2)
@@ -465,13 +464,13 @@ Main.FetchRMD = function()
 		end
 	end
 
-	for _, enum in pairs(enumList) do
+	for _, enum in enumList do
 		local enumName = ""
-		for _, child in pairs(enum.children) do
+		for _, child in enum.children do
 			if child.tag == "Properties" then
 				local data = { Items = {} }
 				local props = child.children
-				for _, prop in pairs(props) do
+				for _, prop in props do
 					local name = prop.attrs.name
 					name = name:sub(1, 1):upper() .. name:sub(2)
 					data[name] = prop.children[1].text
@@ -482,7 +481,7 @@ Main.FetchRMD = function()
 				local data = {}
 				if child.children[1].tag == "Properties" then
 					local props = child.children[1].children
-					for _, prop in pairs(props) do
+					for _, prop in props do
 						local name = prop.attrs.name
 						name = name:sub(1, 1):upper() .. name:sub(2)
 						data[name] = prop.children[1].text
