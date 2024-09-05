@@ -5,7 +5,7 @@ function Utils.initObj(props, mt)
 	local type = type
 	local function copy(t)
 		local res = {}
-		for i, v in pairs(t) do
+		for i, v in t do
 			if type(v) == "table" then
 				res[i] = copy(v)
 			else

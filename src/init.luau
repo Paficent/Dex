@@ -965,12 +965,12 @@ Main.CreateMainGui = function()
 		Window = ScriptViewer.Window,
 	})
 
-	-- Main.CreateApp({
-	-- 	Name = "Object Viewer",
-	-- 	IconMap = Main.LargeIcons,
-	-- 	Icon = "ScriptViewer",
-	-- 	Window = ObjectViewer.Window,
-	-- })
+	Main.CreateApp({
+		Name = "Object Viewer",
+		IconMap = Main.LargeIcons,
+		Icon = "ScriptViewer",
+		Window = ObjectViewer.Window,
+	})
 
 	Main.CreateApp({
 		Name = "Executor",

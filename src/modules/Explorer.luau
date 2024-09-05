@@ -4,7 +4,7 @@ local Services = require(script.Parent.Parent.utils.Services)
 local env = require(script.Parent.Parent.utils.env)
 
 local Main, Apps, Settings = shared.Main, shared.Apps, shared.Settings -- Main Containers
-local Properties, ScriptViewer, Lib = Apps.Properties, Apps.ScriptViewer, Apps.Lib -- Major Apps
+local Properties, ScriptViewer, ObjectViewer, Lib = Apps.Properties, Apps.ScriptViewer, Apps.ObjectViewer, Apps.Lib -- Major Apps
 local API, RMD, plr, create = shared.API, shared.RMD, shared.plr, shared.create
 
 local Explorer = {}
@@ -1489,24 +1489,19 @@ Explorer.InitRightClick = function()
 	)
 
 	context:Register("VIEW_OBJECT", {
-		Name = "View Object (Right click to reset)",
+		Name = "View Object",
 		IconMap = Explorer.ClassIcons,
 		Icon = 5,
 		OnClick = function()
 			local sList = selection.List
-			local isa = game.IsA
 
 			for i = 1, #sList do
 				local node = sList[i]
 
-				if isa(node.Obj, "BasePart") or isa(node.Obj, "Model") then
-					workspace.CurrentCamera.CameraSubject = node.Obj
-					break
+				if node.Obj:IsA("BasePart") or node.Obj:IsA("Model") then
+					ObjectViewer.ViewObject(node.Obj)
 				end
 			end
-		end,
-		OnRightClick = function()
-			workspace.CurrentCamera.CameraSubject = plr.Character
 		end,
 	})
 
@@ -1518,6 +1513,18 @@ Explorer.InitRightClick = function()
 			local scr = selection.List[1] and selection.List[1].Obj
 			if scr then
 				ScriptViewer.ViewScript(scr)
+			end
+		end,
+	})
+
+	context:Register("VIEW_SCRIPT", {
+		Name = "View Object",
+		IconMap = Explorer.MiscIcons,
+		Icon = "ViewScript",
+		OnClick = function()
+			local scr = selection.List[1] and selection.List[1].Obj
+			if scr then
+				ObjectViewer.ViewObject(scr)
 			end
 		end,
 	})
