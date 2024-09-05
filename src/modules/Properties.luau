@@ -1109,7 +1109,7 @@ Properties.DisplayAddAttributeWindow = function(editAttr)
 		nameBox.Position = UDim2.new(0, 75, 0, 10)
 		nameBox.Size = UDim2.new(0, 120, 0, 20)
 		win:Add(nameBox, "NameBox")
-		nameBox.textBox:GetPropertyChangedSignal("Text"):Connect(function()
+		nameBox.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 			saveButton:SetDisabled(#nameBox:GetText() == 0)
 		end)
 
