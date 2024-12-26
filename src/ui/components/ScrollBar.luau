@@ -1,5 +1,5 @@
 local Services = require(script.Parent.Parent.Parent.utils.Services)
-local Signal = require(script.Parent.Parent.Parent.packages.Signal)
+local Signal = require(script.Parent.Parent.Parent.Packages.Signal)
 
 local Players: Players, UserInputService: UserInputService = Services:Get("Players", "UserInputService")
 local Lib = shared.Apps.Lib

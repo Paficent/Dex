@@ -1,5 +1,5 @@
 -- TODO: Convert to newer class model
-local Signal = require(script.Parent.Parent.Parent.packages.Signal)
+local Signal = require(script.Parent.Parent.Parent.Packages.Signal)
 
 local Lib, create = shared.Apps.Lib, shared.create
 

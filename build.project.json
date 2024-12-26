@@ -1,0 +1,12 @@
+{
+    "name": "Dex",
+    "tree": {
+        "$path": "src",
+        "Packages": {
+            "$path": "Packages"
+        },
+        "Assets": {
+            "$path": "misc/assets"
+        }
+    }
+}

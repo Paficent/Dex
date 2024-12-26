@@ -1,11 +1,22 @@
-{"name": "Dex",
+{
+    "name": "Dex",
     "tree": {
-		"$className": "DataModel",
-		"ReplicatedStorage": {
-			"$className": "ReplicatedStorage",
-			"Dex": {
-				"$path": "src"
-			}
-		}
-	}
+        "$className": "DataModel",
+        "StarterPlayer": {
+            "StarterCharacterScripts": {
+                "$path": "misc/test"
+            }
+        },
+        "ReplicatedStorage": {
+            "Dex": {
+                "$path": "src",
+                "Packages": {
+                    "$path": "Packages"
+                },
+                "Assets": {
+                    "$path": "misc/assets"
+                }
+            }
+        }
+    }
 }

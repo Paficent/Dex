@@ -37,15 +37,6 @@ do
 	plr = shared.plr
 end
 
-local function getDefaultConfig() -- TODO
-	local config = require(script.config)
-
-	return {
-		decompiler = config.decompiler.default(),
-		saveinstance = config.saveinstance.default(),
-	}
-end
-
 -- Locals
 local Explorer, Properties, ScriptViewer, RemoteSpy
 local DefaultSettings = {
@@ -219,8 +210,8 @@ Main.FetchAPI = function()
 		end
 		rawAPI = rawAPI or game:HttpGet("http://setup.roblox.com/" .. Main.RobloxVersion .. "-API-Dump.json")
 	else
-		if script.assets:FindFirstChild("API") then
-			rawAPI = require(script.assets.API)
+		if script.Assets:FindFirstChild("API") then
+			rawAPI = require(script.Assets.API)
 		else
 			error("NO API EXISTS")
 		end
@@ -391,7 +382,7 @@ Main.FetchRMD = function()
 			)
 	else
 		if script.assets:FindFirstChild("RMD") then
-			rawXML = require(script.assets.RMD)
+			rawXML = require(script.Assets.RMD)
 		else
 			error("NO RMD EXISTS")
 		end
@@ -1012,10 +1003,9 @@ Main.LocalDepsUpToDate = function()
 	return Main.DepsVersionData and Main.ClientVersion == Main.DepsVersionData[1]
 end
 
-Main.Init = function(config: { any }?)
-	shared.Config = shared.Config or config or getDefaultConfig()
+Main.Init = function()
 	Services = require(script.utils.Services)
-	env = require(script.utils.env)
+	env = require(script.utils.Environment)
 
 	Main.GuiHolder = env.IsElevated() and Services.CoreGui or plr:FindFirstChildOfClass("PlayerGui")
 
@@ -1148,7 +1138,7 @@ Main.Init = function(config: { any }?)
 	return true
 end
 
--- Setup config in bundled versions
+-- Setup in bundled versions
 local Dex
 if pcall(function()
 	local _ = game:GetService("CoreGui"):GetFullName()

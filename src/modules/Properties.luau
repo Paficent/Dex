@@ -1,7 +1,7 @@
 -- Common Locals
 local components = require(script.Parent.Parent.ui).components
 local Services = require(script.Parent.Parent.utils.Services)
-local env = require(script.Parent.Parent.utils.env)
+local env = require(script.Parent.Parent.utils.Environment)
 
 local Main, Lib, Apps, Settings = shared.Main, shared.Apps.Lib, shared.Apps, shared.Settings
 local API, RMD, create = shared.API, shared.RMD, shared.create

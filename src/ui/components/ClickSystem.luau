@@ -1,7 +1,7 @@
-local Signal = require(script.Parent.Parent.Parent.packages.Signal)
+local Signal = require(script.Parent.Parent.Parent.Packages.Signal)
 local Services = require(script.Parent.Parent.Parent.utils.Services)
 
-local UserInputService: UserInputService = Services.UserInputService
+local UserInputService: UserInputService = Services.UserInputService :: UserInputService
 local Lib = shared.Apps.Lib
 
 local funcs = {

@@ -1,4 +1,4 @@
-local Signal = require(script.Parent.Parent.Parent.packages.Signal)
+local Signal = require(script.Parent.Parent.Parent.Packages.Signal)
 local Settings, Lib = shared.Settings, shared.Apps.Lib
 
 -- Define the Button class

@@ -1,6 +1,6 @@
 local components = require(script.Parent.Parent.ui).components
 local LuaUtils = require(script.Parent.Parent.utils.Lua)
-local env = require(script.Parent.Parent.utils.env)
+local env = require(script.Parent.Parent.utils.Environment)
 
 local ScriptViewer = {}
 

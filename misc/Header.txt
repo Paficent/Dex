@@ -1,0 +1,20 @@
+--[[                                                         
+DDDDDDDDDDDDD                                              
+D::::::::::::DDD                                           
+D:::::::::::::::DD                                         
+DDD:::::DDDDD:::::D                                        
+  D:::::D    D:::::D     eeeeeeeeeeee  xxxxxxx      xxxxxxx
+  D:::::D     D:::::D  ee::::::::::::ee x:::::x    x:::::x 
+  D:::::D     D:::::D e::::::eeeee:::::eex:::::x  x:::::x  
+  D:::::D     D:::::De::::::e     e:::::e x:::::xx:::::x   
+  D:::::D     D:::::De:::::::eeeee::::::e  x::::::::::x    
+  D:::::D     D:::::De:::::::::::::::::e    x::::::::x     
+  D:::::D     D:::::De::::::eeeeeeeeeee     x::::::::x     
+  D:::::D    D:::::D e:::::::e             x::::::::::x    
+DDD:::::DDDDD:::::D  e::::::::e           x:::::xx:::::x   
+D:::::::::::::::DD    e::::::::eeeeeeee  x:::::x  x:::::x  
+D::::::::::::DDD       ee:::::::::::::e x:::::x    x:::::x 
+DDDDDDDDDDDDD            eeeeeeeeeeeeeexxxxxxx      xxxxxxx
+]]
+
+-- Repository: https://github.com/Paficent/Dex/

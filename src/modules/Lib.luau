@@ -1,13 +1,14 @@
 -- Common Locals
 local Services = require(script.Parent.Parent.utils.Services)
-local env = require(script.Parent.Parent.utils.env)
+local env = require(script.Parent.Parent.utils.Environment)
 
 local Main = shared.Main
 
-local Lib = {}
-local renderStepped = Services.RunService.RenderStepped
-local signalWait = renderStepped.wait
+local RunService: RunService = Services.RunService :: RunService
 
+local Lib = {}
+local renderStepped = RunService.RenderStepped
+local signalWait = renderStepped.wait
 -- Functions
 Lib.FormatLuaString = (function()
 	local string = string

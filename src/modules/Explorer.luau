@@ -1,7 +1,7 @@
 -- Common Locals
 local components = require(script.Parent.Parent.ui).components
 local Services = require(script.Parent.Parent.utils.Services)
-local env = require(script.Parent.Parent.utils.env)
+local env = require(script.Parent.Parent.utils.Environment)
 
 local Main, Apps, Settings = shared.Main, shared.Apps, shared.Settings -- Main Containers
 local Properties, ScriptViewer, ObjectViewer, Lib = Apps.Properties, Apps.ScriptViewer, Apps.ObjectViewer, Apps.Lib -- Major Apps

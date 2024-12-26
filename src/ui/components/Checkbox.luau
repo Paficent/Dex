@@ -1,5 +1,5 @@
 local Services = require(script.Parent.Parent.Parent.utils.Services)
-local Signal = require(script.Parent.Parent.Parent.packages.Signal)
+local Signal = require(script.Parent.Parent.Parent.Packages.Signal)
 
 local Debris: Debris, TweenService: TweenService, UserInputService: UserInputService =
 	Services:Get("Debris", "TweenService", "UserInputService")
