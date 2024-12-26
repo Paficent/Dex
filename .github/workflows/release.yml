@@ -52,9 +52,6 @@ jobs:
           rokit trust JohnnyMorganz/wally-package-types
           rokit install
 
-      - name: Install Wally Packages
-        run: lune run install
-
       - name: Bundle
         run: lune run build
 
