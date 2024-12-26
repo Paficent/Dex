@@ -4,7 +4,5 @@
 
 #Misc
 # /.vscode
-/.lune
 /build
 sourcemap.json
-wally.lock
