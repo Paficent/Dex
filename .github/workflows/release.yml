@@ -44,11 +44,12 @@ jobs:
 
       - name: Install Necessary Tools
         run: |
-          rokit trust Kampfkarren/selene
-          rokit trust UpliftGames/wally
-          rokit trust rojo-rbx/rojo
-          rokit trust lune-org/lune
           rokit trust seaofvoices/darklua
+          rokit trust lune-org/lune
+          rokit trust rojo-rbx/rojo
+          rokit trust UpliftGames/wally
+          rokit trust Kampfkarren/selene
+          rokit trust JohnnyMorganz/wally-package-types
           rokit install
 
       - name: Install Wally Packages
