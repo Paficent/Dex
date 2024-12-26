@@ -15,7 +15,7 @@ local elevated
 function Environment:IsElevated(): boolean
 	if elevated == nil then
 		elevated = pcall(function()
-			game:GetService("CoreGui").GetFullName()
+			game:GetService("CoreGui"):GetFullName()
 		end)
 	end
 	return elevated
