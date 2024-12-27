@@ -34,7 +34,7 @@ require(Dex)()
   - [x] Lib and UI
   - [ ] Explorer
   - [ ] Properties
-  - [] init.luau
+  - [ ] init.luau
 - [ ] Implement [Luau Syntax]:
   - [x] Avoid using `next`, `ipairs` & `pairs`
   - [x] Type-checking (only for Plugin API and utils)
